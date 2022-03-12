@@ -95,24 +95,27 @@ def generate_xml(verbose=False):
 
             time.sleep(0.1) # 防止访问太快被屏蔽
 
-    item_list.sort(key=lambda rss_item: rss_item.pubDate, reverse=True) # 按照发表时间降序排序
-    rss = PyRSS2Gen.RSS2(title='浙江大学机械工程学院通知公告', 
-                         link='http://me.zju.edu.cn/meoffice/', 
-                         description='浙江大学机械工程学院通知公告', 
-                         lastBuildDate=datetime.datetime.now(), 
-                         items=item_list)
-    rss.write_xml(open(xml_path, 'w', encoding='utf-8'), encoding='utf-8')
-    if verbose: print('rss file updated.')
+    if item_num > 0:
+        # 生成xml文件
+        item_list.sort(key=lambda rss_item: rss_item.pubDate, reverse=True) # 按照发表时间降序排序
+        rss = PyRSS2Gen.RSS2(title='浙江大学机械工程学院通知公告', 
+                             link='http://me.zju.edu.cn/meoffice/', 
+                             description='浙江大学机械工程学院通知公告', 
+                             lastBuildDate=datetime.datetime.now(), 
+                             items=item_list)
+        rss.write_xml(open(xml_path, 'w', encoding='utf-8'), encoding='utf-8')
+        if verbose: print('rss file updated.')
+
+        # 写入本地数据库
+        with open(data_storage, 'wb') as f:
+            pickle.dump([url_set, item_list], f)
+        if verbose: print('database updated.')
 
     # 写入日志文件
     log_str += '------ %s: %d new rss items updated ------\n\n' % (datetime.datetime.now(), item_num)
     log(log_str, log_path)
     if verbose: print('log file updated.')
 
-    # 写入本地数据库
-    with open(data_storage, 'wb') as f:
-        pickle.dump([url_set, item_list], f)
-    if verbose: print('database updated.')
 
 
 if __name__ == '__main__':
