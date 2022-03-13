@@ -10,7 +10,7 @@ In this project, the generated RSS feed is published in GitHub Page site.
 - `user_scripts/`: user defined scripts, assigning items to be added in RSS feed.
 - `url2article.py`: parsing website contents and return relevant data. The API service provided by [URL2io](http://url2io.applinzi.com/) is utilized.
 - `user_api.py`: user settings for URL2io API
-- `gen_rss_demo.py`: python script to call relevant functions and generate RSS feed
+- `gen_rss_demo.py`: Python script to call relevant functions and generate RSS feed
 - `gen_rss_demo.sh`: shell (ash) script to call `gen_rss_demo.py`
 
 ## Prerequisite
@@ -31,7 +31,7 @@ In this project, the generated RSS feed is published in GitHub Page site.
 ```bash
 crontab -e  # open editing pannel
 
-0 8,12,18  * * *  # At minute 0 past hour 8, 12, and 18.
+0 8,12,18 * * * /PATH/TO/gen_rss_demo.sh  # At minute 0 past hour 8, 12, and 18.
 
 # exit editing pannel
 
