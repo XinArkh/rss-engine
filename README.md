@@ -1,14 +1,15 @@
 # rss-engine: A Python framework for generating and deploying RSS feeds
 
-A Python framework for generating and deploying RSS feeds. You can easily and rapidly set up new RSS feeds with this framework!
+A Python framework for generating and deploying RSS feeds. You can also easily and rapidly set up new RSS feeds with this framework!
 
 In this project, the generated RSS feed is published in GitHub Page site.
 
 ## Overview
 
-- `rss_engine.py`: core part of the framework, generating .xml file by calling its internal functions.
+- `rss_engine.py`: core code of the framework, generating .xml file by calling its internal functions.
 - `user_scripts/`: user defined scripts, assigning items to be added in RSS feed.
 - `url2article.py`: parsing website contents and return relevant data. The API service provided by [URL2io](http://url2io.applinzi.com/) is utilized.
+- `user_api.py`: user setting for URL2io API
 - `gen_rss_demo.py`: python script to call relevant functions and generate RSS feed
 - `gen_rss_demo.sh`: shell (ash) script to call `gen_rss_demo.py`
 
@@ -21,7 +22,7 @@ In this project, the generated RSS feed is published in GitHub Page site.
 
 ## Deployment
 
-1. Sign up at URL2io and replace with valid API token in `url2article.py` 
+1. Sign up at URL2io and replace with valid API token in `user_api.py` 
 2. Clone this repository and your GitHub Pages repository at you server (OpenWRT@RasPi in my env)
 3. Configure `gen_rss_demo.sh`, set PATHs actual paths in your server
 4. set executing permission of `gen_rss_demo.sh` (`chmod +x gen_rss_demo.sh`)
