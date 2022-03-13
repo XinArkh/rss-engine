@@ -12,8 +12,8 @@ output_dir = args.output
 
 # --- generate zju-me rss feed ---
 output = os.path.join(output_dir, 'zju-me.xml')
-database = 'zju-me.pkl'
-logfile = 'zju-me.log'
+database = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'zju-me.pkl')
+logfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'zju-me.log')
 homepage1 = 'http://me.zju.edu.cn/meoffice/'                # 通知公告
 homepage2 = 'http://me.zju.edu.cn/meoffice/6440/list.htm'   # 研究生教育
 homepage3 = 'http://me.zju.edu.cn/meoffice/6469/list.htm'   # 学生工作
@@ -31,8 +31,8 @@ rss_engine.generate_xml(url_list, title_prefix_list,
 
 # --- generate zju-grs rss feed ---
 output = os.path.join(output_dir, 'zju-grs.xml')
-database = 'zju-grs.pkl'
-logfile = 'zju-grs.log'
+database = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'zju-grs.pkl')
+logfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'zju-grs.log')
 homepage = 'http://www.grs.zju.edu.cn/'
 
 from user_scripts.user_script_grs import fetch_src_list
