@@ -8,19 +8,16 @@ if [ -e $TMP_RSS_LOCK ]; then
 else
 touch $TMP_RSS_LOCK
 
-# run rss engine to generate xml file
-ZJU_ME_PATH="/root/rss_feed/zju-me-rss/"
-ZJU_GRS_PATH="/root/rss_feed/zju-grs-rss/"
+# run python script to update rss feed
+RSS_ENGINE_PATH="/root/rss_feed/rss-engine"
 REPO_PATH="/root/rss_feed/XinArkh.github.io/"
 OUTPUT_PATH=${REPO_PATH}"rss/"
 
-echo "--- updating zju-me rss feed... ---"
-python ${ZJU_ME_PATH}rss_engine.py -o $OUTPUT_PATH
-echo "--- updating zju-grs rss feed... ---"
-python ${ZJU_GRS_PATH}rss_engine.py -o $OUTPUT_PATH
+echo "--- updating rss feed... ---"
+python ${RSS_ENGINE_PATH}gen_rss_demo.py -o $OUTPUT_PATH
+echo "--- rss feed updated! ---"
 
-
-# upload xml to github repo
+# upload rss feed to github repo
 CRTDIR=$(pwd)
 CRTDATE=$(date "+%Y-%m-%d")
 
@@ -28,7 +25,7 @@ cd $REPO_PATH
 echo "--- uploading rss feed... ---"
 git pull
 git add rss/*.xml
-git commit -m "rss daily update "$CRTDATE
+git commit -m "rss feed daily update: "$CRTDATE
 git push
 echo "--- rss feed updating done! ---"
 
