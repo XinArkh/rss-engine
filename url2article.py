@@ -3,9 +3,7 @@ import datetime
 import requests
 import rss_engine
 
-
-api_url = 'http://url2api.applinzi.com/article'
-my_token = 'xxx'
+from user_api import url2io_token, url2io_api
 
 
 def match_pubdate(html):
@@ -25,11 +23,13 @@ def match_pubdate(html):
 
 def get_article(url):
     html = rss_engine.get_url_content(url)
-    query_string = {'token': my_token, 'url': url,}
+    query_string = {'token': url2io_token, 'url': url,}
     headers = { 'content-type': "text/html", }
-    article = requests.post(api_url, params=query_string, headers=headers, data=html.encode('utf-8'))
+    article = requests.post(url2io_api, params=query_string, headers=headers, data=html.encode('utf-8'))
+
     if article.status_code != 200:
-        raise ValueError('Request response %d, expecting 200!' % article.status_code)
+        article_info = eval(article.text)
+        raise Exception('%s: [Response %d] %s' % (article_info['error'], article.status_code, article_info['msg']))
 
     article_info = article.json().copy()
 
@@ -41,6 +41,7 @@ def get_article(url):
 
 
 if __name__ == '__main__':
+    # example
     article = get_article('http://ygb.zju.edu.cn/2022/0304/c31564a2503309/page.htm')
     print(article.keys())
     print(article)
