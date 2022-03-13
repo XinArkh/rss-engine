@@ -9,7 +9,7 @@ In this project, the generated RSS feed is published in GitHub Page site.
 - `rss_engine.py`: core code of the framework, generating .xml file by calling its internal functions.
 - `user_scripts/`: user defined scripts, assigning items to be added in RSS feed.
 - `url2article.py`: parsing website contents and return relevant data. The API service provided by [URL2io](http://url2io.applinzi.com/) is utilized.
-- `user_api.py`: user setting for URL2io API
+- `user_api.py`: user settings for URL2io API
 - `gen_rss_demo.py`: python script to call relevant functions and generate RSS feed
 - `gen_rss_demo.sh`: shell (ash) script to call `gen_rss_demo.py`
 
