@@ -67,7 +67,7 @@ def fetch_src_list(homepage):
     url_list3 = get_url_list_xsgz(hp3)
 
     url_list = url_list1 + url_list2 + url_list3
-    title_prefix_list = ['【通知公告】'] * len(url_list1) + ['【研究生教育】'] * len(url_list2) + ['【学生工作】'] * len(url_list3)
+    title_prefix_list = ['通知公告'] * len(url_list1) + ['研究生教育'] * len(url_list2) + ['学生工作'] * len(url_list3)
 
     return url_list, title_prefix_list
 
