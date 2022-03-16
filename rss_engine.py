@@ -72,7 +72,7 @@ def generate_xml(url_list, title_prefix_list=None,
             try:
                 article = url2article.get_article(url)
                 article_link = article['url']
-                article_title = '【' + title_prefix + '】' + article['title']
+                article_title = title_prefix + article['title']
                 article_pubdate = datetime.datetime.strptime(article['date'], '%Y-%m-%d %H:%M:%S')
                 article_description = article['content']
 
