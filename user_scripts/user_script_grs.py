@@ -1,3 +1,5 @@
+import os, sys
+sys.path.extend([os.path.dirname(os.path.dirname(os.path.abspath(__file__)))])
 from bs4 import BeautifulSoup
 import rss_engine
 
