@@ -20,13 +20,14 @@ echo "--- rss feed updated! ---"
 
 # upload rss feed to github repo
 CRTDIR=$(pwd)
-CRTDATE=$(date "+%Y-%m-%d")
+# CRTDATE=$(date "+%Y-%m-%d")
+CRTDATE=$(date)
 
 cd $REPO_PATH
 echo "--- uploading rss feed... ---"
 git pull
 git add rss/*.xml
-git commit -m "rss feed daily update: "$CRTDATE
+git commit -m "rss feed auto update: "$CRTDATE
 git push
 echo "--- rss feed updating done! ---"
 
