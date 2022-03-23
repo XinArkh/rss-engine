@@ -2,7 +2,7 @@
 
 
 TMP_RSS_LOCK="/tmp/rss.lock"
-if [ -e $TMP_RSS_LOCK ]; then
+if [ -e ${TMP_RSS_LOCK} ]; then
     echo "Another instance of rss script is running. Aborting."
     exit
 else
@@ -13,6 +13,7 @@ RSS_ENGINE_PATH="/root/rss_feed/rss-engine/"
 REPO_PATH="/root/rss_feed/XinArkh.github.io/"
 OUTPUT_PATH=${REPO_PATH}"rss/"
 
+echo `date`
 echo "--- updating rss feed... ---"
 python ${RSS_ENGINE_PATH}gen_rss_demo.py -o $OUTPUT_PATH
 echo "--- rss feed updated! ---"
