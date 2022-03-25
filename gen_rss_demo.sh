@@ -27,7 +27,7 @@ cd $REPO_PATH
 echo "--- uploading rss feed... ---"
 git pull
 git add rss/*.xml
-git commit -m "rss feed auto update: "$CRTDATE
+git commit -m "rss feed auto update: ${CRTDATE}"
 git push
 echo "--- rss feed updating done! ---"
 
