@@ -44,3 +44,20 @@ rss_engine.generate_xml(url_list, title_prefix_list,
                         rss_description='浙江大学研究生院信息公告', 
                         output=output, database=database, logfile=logfile, 
                         verbose=True)
+
+
+# --- generate jike dailypost feed ---
+output = os.path.join(output_dir, 'jike-dailypost.xml')
+database = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'jike-dailypost.pkl')
+logfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'jike-dailypost.log')
+homepage = 'https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68'
+
+from user_scripts.user_script_jike_dailypost import fetch_src_list, get_article
+
+url_list = fetch_src_list(homepage)
+rss_engine.generate_xml(url_list, parser=get_article, 
+                        rss_title='一觉醒来世界发生了什么-即刻App', 
+                        rss_link='https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68', 
+                        rss_description='一觉醒来世界发生了什么-即刻App', 
+                        output=output, database=database, logfile=logfile, 
+                        verbose=True)
