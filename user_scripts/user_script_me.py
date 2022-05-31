@@ -1,14 +1,22 @@
-import os, sys
-sys.path.extend([os.path.dirname(os.path.dirname(os.path.abspath(__file__)))])
+import requests
 from bs4 import BeautifulSoup
-import rss_engine
+
+
+def get_url_content(url):
+    '''
+    获取网页源码，以字符串方式返回
+    '''
+    r = requests.get(url)
+    r.raise_for_status()
+    r.encoding = 'utf-8'
+    return r.text
 
 
 def get_url_list_tzgg(homepage):
     '''
     《通知公告》板块
     '''
-    html = rss_engine.get_url_content(homepage)
+    html = get_url_content(homepage)
     url_list = []
     soup = BeautifulSoup(html, 'html.parser')
     for elem in soup.find_all('div'):
@@ -27,7 +35,7 @@ def get_url_list_yjsjy(homepage):
     '''
     《研究生教育》板块
     '''
-    html = rss_engine.get_url_content(homepage)
+    html = get_url_content(homepage)
     url_list = []
     soup = BeautifulSoup(html, 'html.parser')
     for elem in soup.find_all('div'):
@@ -46,7 +54,7 @@ def get_url_list_xsgz(homepage):
     '''
     《学生工作》板块
     '''
-    html = rss_engine.get_url_content(homepage)
+    html = get_url_content(homepage)
     url_list = []
     soup = BeautifulSoup(html, 'html.parser')
     for elem in soup.find_all('div'):

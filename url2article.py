@@ -1,9 +1,18 @@
 import re
 import datetime
 import requests
-import rss_engine
 
 from user_api import url2io_token, url2io_api
+
+
+def get_url_content(url):
+    '''
+    获取网页源码，以字符串方式返回
+    '''
+    r = requests.get(url)
+    r.raise_for_status()
+    r.encoding = 'utf-8'
+    return r.text
 
 
 def match_pubdate(html):
@@ -22,7 +31,7 @@ def match_pubdate(html):
 
 
 def get_article(url):
-    html = rss_engine.get_url_content(url)
+    html = get_url_content(url)
     query_string = {'token': url2io_token, 'url': url,}
     headers = { 'content-type': "text/html", }
     article = requests.post(url2io_api, params=query_string, headers=headers, data=html.encode('utf-8'))

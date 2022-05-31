@@ -1,21 +1,9 @@
 import time
 import datetime
 import pickle
-import requests
 import PyRSS2Gen
 
 import url2article
-
-
-def get_url_content(url):
-    '''
-    获取网页源码，以字符串方式返回
-    '''
-    r = requests.get(url)
-    r.raise_for_status()
-    r.encoding = 'utf-8'
-    # print(r.text)
-    return r.text
 
 
 def is_new_article(url, url_set):
