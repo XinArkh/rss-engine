@@ -35,7 +35,7 @@ def log(msg: str, path: str):
             f.writelines(msg)
 
 
-def generate_xml(url_list, title_prefix_list=None, 
+def generate_xml(url_list, title_prefix_list=None, parser=None, 
                  rss_title='rss engine demo', rss_link='https://github.com/XinArkh/rss-engine', 
                  rss_description='rss engine demo', 
                  output='./demo.xml', database='./demo.pkl', logfile='./demo.log',
@@ -45,6 +45,7 @@ def generate_xml(url_list, title_prefix_list=None,
     '''
     if not title_prefix_list: title_prefix_list = [''] * len(url_list)
     assert len(url_list) == len(title_prefix_list)
+    if not parser: parser = url2article.get_article
 
     try:                        # 尝试打开本地数据库，数据库中保存url记录和rss items
         with open(database, 'rb') as f:
@@ -58,12 +59,11 @@ def generate_xml(url_list, title_prefix_list=None,
     for url, title_prefix in zip(url_list, title_prefix_list):
         if is_new_article(url, url_set):
             try:
-                article = url2article.get_article(url)
+                article = parser(url)
                 article_link = article['url']
                 article_title = title_prefix + article['title']
                 article_pubdate = datetime.datetime.strptime(article['date'], '%Y-%m-%d %H:%M:%S')
                 article_description = article['content']
-
                 if is_article_up_to_date(article_pubdate, within_days=within_days):
                     item_list.append(PyRSS2Gen.RSSItem(title=article_title, 
                                                        link=article_link, 
