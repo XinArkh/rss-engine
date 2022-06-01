@@ -1,4 +1,4 @@
-#! /bin/ash
+#! /bin/bash
 
 
 TMP_RSS_LOCK="/tmp/rss.lock"
