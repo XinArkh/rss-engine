@@ -35,14 +35,31 @@ def log(msg: str, path: str):
             f.writelines(msg)
 
 
-def generate_xml(url_list, title_prefix_list=None, parser=None, 
-                 rss_title='rss engine demo', rss_link='https://github.com/XinArkh/rss-engine', 
+def generate_xml(url_list, title_prefix_list=None, parser=None, headers=None, 
+                 rss_title='rss engine demo', 
                  rss_description='rss engine demo', 
-                 output='./demo.xml', database='./demo.pkl', logfile='./demo.log',
-                 within_days=365, max_item=50, verbose=False):
+                 rss_link='https://github.com/XinArkh/rss-engine', 
+                 within_days=365, max_item=50, 
+                 output='./demo.xml', database='./demo.pkl', logfile='./demo.log', 
+                 verbose=False
+                ):
+    '''生成rss xml文件
+
+    url_list: 要生成的文章链接列表，每一个链接对应一个文章
+    title_prefix_list: 文章标题前缀，和输入的链接一一对应，可选
+    parser: 文章解析器，从一个文章链接中解析得到其信息，包括链接、日期、内容、标题，默认使用内置的URL2io解析器
+    headers: 解析器请求网页时可能用到的请求头
+    rss_title: RSS推送标题
+    rss_description: RSS推送描述
+    rss_link: RSS推送链接
+    output: xml文件输出路径
+    database: 缓存数据库路径
+    logfile: 日志文件路径
+    within_days: 限定日期，过于久远的文章不再收录
+    max_item: 最大保留文章数目
+    verbose: 是否输出详细日志，默认否
     '''
-    生成rss xml文件
-    '''
+
     if not title_prefix_list: title_prefix_list = [''] * len(url_list)
     assert len(url_list) == len(title_prefix_list)
     if not parser: parser = url2article.get_article
@@ -59,7 +76,7 @@ def generate_xml(url_list, title_prefix_list=None, parser=None,
     for url, title_prefix in zip(url_list, title_prefix_list):
         if is_new_article(url, url_set):
             try:
-                article = parser(url)
+                article = parser(url, headers)
                 article_link = article['url']
                 article_title = title_prefix + article['title']
                 article_pubdate = datetime.datetime.strptime(article['date'], '%Y-%m-%d %H:%M:%S')
@@ -105,7 +122,6 @@ def generate_xml(url_list, title_prefix_list=None, parser=None,
     log_str += '------ %s: %d new rss items updated ------\n\n' % (datetime.datetime.now(), item_num)
     log(log_str, logfile)
     if verbose: print('%s: log file updated.' %rss_title)
-
 
 
 if __name__ == '__main__':

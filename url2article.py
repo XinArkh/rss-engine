@@ -5,11 +5,11 @@ import requests
 from user_api import url2io_token, url2io_api
 
 
-def get_url_content(url):
+def get_url_content(url, headers=None):
     '''
     获取网页源码，以字符串方式返回
     '''
-    r = requests.get(url)
+    r = requests.get(url, headers=headers)
     r.raise_for_status()
     r.encoding = 'utf-8'
     return r.text
@@ -30,11 +30,11 @@ def match_pubdate(html):
         return None
 
 
-def get_article(url):
-    html = get_url_content(url)
+def get_article(url, headers=None):
+    html = get_url_content(url, headers)
     query_string = {'token': url2io_token, 'url': url,}
-    headers = { 'content-type': "text/html", }
-    article = requests.post(url2io_api, params=query_string, headers=headers, data=html.encode('utf-8'))
+    headers_url2io = { 'content-type': "text/html", }
+    article = requests.post(url2io_api, params=query_string, headers=headers_url2io, data=html.encode('utf-8'))
 
     if article.status_code != 200:
         article_info = eval(article.text)
