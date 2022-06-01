@@ -61,3 +61,24 @@ rss_engine.generate_xml(url_list, parser=get_article,
                         rss_description='一觉醒来世界发生了什么-即刻App', 
                         output=output, database=database, logfile=logfile, 
                         verbose=True)
+
+
+# --- generate 睡前消息 feed ---
+file_name = 'bedtime_story'
+output = os.path.join(output_dir, file_name+'.xml')
+database = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name+'.pkl')
+logfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name+'.log')
+homepage = 'https://weixin.sogou.com/weixin'
+headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36',
+           'cookie': 'SUID=0C91AE272208990A000000005C7145DC; SUV=1550927324797555; ssuid=8275997946; LSTMV=241%2C183; LCLKINT=5135; IPLOC=CN3301; weixinIndexVisited=1; ABTEST=0|1654062326|v1; SNUID=67E1DE5770758F331506DFA470A2FCB2; JSESSIONID=aaaSeJsIn-ln9fmk-p6dy; ariaDefaultTheme=undefined'
+          }
+
+from user_scripts.user_script_bedtime_story import fetch_src_list, get_article
+
+url_list = fetch_src_list(homepage)
+rss_engine.generate_xml(url_list, parser=get_article, headers=headers,
+                        rss_title='睡前消息', 
+                        rss_link='http://mp.weixin.qq.com/profile?src=3&timestamp=1654092522&ver=1&signature=rrwTD7PDLmVAJCJ5n8R2ZfXDE1rbZyxkVPhQCnyS1icTyFQ9U*4qbUwmv9SY2SNT64DjVc5sRTLA2JRTxEUSsQ==', 
+                        rss_description='睡前消息-马前卒工作室', 
+                        output=output, database=database, logfile=logfile, 
+                        verbose=True)
