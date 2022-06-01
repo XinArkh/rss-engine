@@ -1,3 +1,7 @@
+"""
+用户脚本：即刻App-一觉醒来世界发生了什么
+需要提供关键函数：gen_url_list()和parse_article()
+"""
 import datetime
 import requests
 from bs4 import BeautifulSoup
@@ -13,9 +17,9 @@ def get_url_content(url):
     return r.text
 
 
-def fetch_src_list(homepage):
+def gen_url_list(homepage):
     '''
-    即刻APP-一觉醒来世界发生了什么
+    即刻App-一觉醒来世界发生了什么
     https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68
     '''
     html = get_url_content(homepage)
@@ -28,7 +32,7 @@ def fetch_src_list(homepage):
     return url_list
 
 
-def get_article(url):
+def parse_article(url):
     article = {}
     article['url'] = url
 
@@ -43,8 +47,6 @@ def get_article(url):
         link = li.a['href']
         num = li.find('span', class_='num').text
         text = li.find('span', class_='text').text
-
-        # print(link, num, text)
         content += '<a href="%s">%s %s</a><br>' % (link, num, text)
     article['content'] = content
 
@@ -53,10 +55,11 @@ def get_article(url):
 
 if __name__ == '__main__':
     homepage = 'https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68'
-    url_list = fetch_src_list(homepage)
+    url_list = gen_url_list(homepage)
     
     for url in url_list:
         print(url)
 
-    article = get_article('https://www.okjike.com/medium/6294d32c507773ea4a9b7f6d')
+    article = parse_article('https://www.okjike.com/medium/62961d36bf5ecc46ef19e885')
     print(article)
+    print(article.keys())
