@@ -89,6 +89,7 @@ rss = rss_engine.RSSEngine(rss_title='睡前消息',
                                     'fXDE1rbZyxkVPhQCnyS1icTyFQ9U*4qbUwmv9SY2SNT64DjVc5sRTLA2JRTxEUSsQ==', 
                            rss_description='睡前消息-马前卒工作室', 
                            output=output, database=database, logfile=logfile, 
+                           double_check=True, 
                            verbose=True)
 rss.set_article_parser(parse_article, headers=headers)
 rss.generate_xml(url_list)

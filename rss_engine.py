@@ -13,7 +13,9 @@ class RSSEngine:
                  rss_link='https://github.com/XinArkh/rss-engine', 
                  within_days=365, max_item_num=50, 
                  output='./demo.xml', database='./demo.pkl', logfile='./demo.log', 
-                 verbose=False):
+                 double_check=False,
+                 verbose=False
+                 ):
         self.rss_title = rss_title
         self.rss_description = rss_description
         self.rss_link = rss_link
@@ -22,15 +24,24 @@ class RSSEngine:
         self.output = output
         self.database = database
         self.logfile = logfile
+        self.double_check = double_check
         self.verbose = verbose
 
         self.article_parser = url2article.parse_article
         self.article_parser_params = None
 
-    def is_already_added(self, url, url_set):
-        """Whether the URL already added in the collection"""
+    def is_url_already_collected(self, url, url_set):
+        """Whether the URL already collected in the database"""
 
         if url in url_set:
+            return True
+        else:
+            return False
+
+    def is_title_already_collected(self, title, title_list):
+        """Whether the title already collected in the database"""
+
+        if title in title_list:
             return True
         else:
             return False
@@ -79,7 +90,7 @@ class RSSEngine:
         log_str = ''
         item_num = 0
         for url, title_prefix in zip(url_list, title_prefix_list):
-            if not self.is_already_added(url, url_set):
+            if not self.is_url_already_collected(url, url_set):
                 try:
                     if self.article_parser_params:
                         article = self.article_parser(url, **self.article_parser_params)
@@ -90,6 +101,10 @@ class RSSEngine:
                     article_title = title_prefix + article['title']
                     article_pubdate = datetime.datetime.strptime(article['date'], '%Y-%m-%d %H:%M:%S')
                     article_description = article['content']
+
+                    if self.double_check:
+                        if self.is_title_already_collected(article_title, [item.title for item in item_list]):
+                            continue
 
                     if self.is_article_up_to_date(article_pubdate):
                         item_list.append(PyRSS2Gen.RSSItem(title=article_title, 
