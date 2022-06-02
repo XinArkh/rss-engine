@@ -91,7 +91,11 @@ def prettify_article(html):
         if child.name == 'section':
             previous_sibling = child.previous_sibling
             next_sibling = child.next_sibling
-            title = previous_sibling.span.strong.text
+
+            if not previous_sibling.find('strong'):
+                title = ''
+            else:
+                title = previous_sibling.span.strong.text
             link = next_sibling.span.text
 
             if re.match(r'\d+\. .*$', title):

@@ -119,9 +119,9 @@ class RSSEngine:
                     else:
                         log_str += 'item out of date, skipped: ' + article_title +' ' + str(article['date']) +' ' + article_link + '\n'
                         if self.verbose: print('item out of date, skipped:', article_title, article['date'], article_link)
-                except:
-                    log_str += 'item add failed: ' + article_title +' ' + str(article['date']) +' ' + article_link + '\n'
-                    if self.verbose: print('item add failed:', article_title, article['date'], article_link)
+                except Exception as e:
+                    log_str += 'item add failed: ' + article_title + ' ' + str(article['date']) +' ' + url + ' : ' + str(e) + '\n'
+                    if self.verbose: print('item add failed:', article_title, article['date'], url, ':', str(e))
 
             time.sleep(0.01) # avoid network blockdown
 
