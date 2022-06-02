@@ -95,7 +95,7 @@ def prettify_article(html):
             if not previous_sibling.find('strong'):
                 title = ''
             else:
-                title = previous_sibling.span.strong.text
+                title = previous_sibling.strong.text
             link = next_sibling.span.text
 
             if re.match(r'\d+\. .*$', title):
