@@ -126,8 +126,12 @@ def prettify_article(html):
                     else:                                   # 判断前面元素为文本
                         a_tag = soup.new_tag('a', href=link)
                         a_tag.string = '+ ' + title
-                        prev_sibling.clear()
-                        prev_sibling.append(a_tag)
+                        if title is not '':                 # 有文本，转换对应tag
+                            prev_sibling.clear()
+                            prev_sibling.append(a_tag)
+                        else:                               # 无文本，插入新tag
+                            prev_sibling = child.previous_sibling
+                            prev_sibling.insert_before(a_tag)
 
                     title = ''
                     prev_sibling = None
