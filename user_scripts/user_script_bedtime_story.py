@@ -44,7 +44,7 @@ def gen_url_list(homepage, length=10):
         url = search_article(homepage, date)
         if url:
             url_list.append(url)
-        time.sleep(0.01)
+        time.sleep(0.05)
 
     return url_list
 
@@ -75,45 +75,69 @@ def replace_img_link(html):
     参考文章：https://blog.csdn.net/yanjiee/article/details/52938144
     """
 
-    return re.sub(r'mmbiz\.qpic\.cn', r'read.html5.qq.com/image?src=forum&q=5&r=0&imgflag=7&imageUrl=http://mmbiz.qpic.cn', html)
+    return re.sub(r'mmbiz\.qpic\.cn', 
+                  r'read.html5.qq.com/image?src=forum&q=5&r=0&imgflag=7&imageUrl=http://mmbiz.qpic.cn', 
+                  html
+                  )
+
+
+def remove_break_line(html):
+    """移除网页源代码中人为增加的空白行"""
+
+    return re.sub(r'<p><br/?></p>|<p><span><br/?></span></p>|<p><span>　</span></p>', 
+                  r'', 
+                  html
+                  )
 
 
 def prettify_article(html):
     """优化文章内容格式"""
 
+    html = replace_img_link(html)
+    html = remove_break_line(html)
+
     soup = BeautifulSoup(html, 'html.parser')
-    soup.p.extract()
 
     for child in soup.div.children:
-        if child.name == 'section' and 'br' in [content.name for content in child.contents]:
+        if child.get_text().startswith('长按或扫码'):
             break
 
-        if child.name == 'section':
-            previous_sibling = child.previous_sibling
-            next_sibling = child.next_sibling
+        if child.name == 'p':
+            if child.get_text():
+                if not child.get_text().startswith('http'): # 文本或标题
+                    title = child.get_text()
+                    prev_sibling = child
+                else:                                       # 链接
+                    link = child.get_text()
 
-            if not previous_sibling.find('strong'):
-                title = ''
-            else:
-                title = previous_sibling.strong.text
-            link = next_sibling.span.text
+                    if re.match(r'\d+\..*$', title):        # 判断前面元素为标题
+                        prev_sibling.name = 'h3'
+                        a_tag = soup.new_tag('a', href=link)
+                        a_tag.string = title
+                        prev_sibling.clear()
+                        prev_sibling.append(a_tag)
 
-            if re.match(r'\d+\. .*$', title):
-                previous_sibling.name = 'h3'
-                a_tag = soup.new_tag('a', href=link)
-                a_tag.string = title
-                previous_sibling.clear()
-                previous_sibling.append(a_tag)
-            else:
-                a_tag = soup.new_tag('a', href=link)
-                a_tag.string = '+ ' + title
-                previous_sibling.clear()
-                previous_sibling.append(a_tag)
+                        if not title.startswith('1.'):      # 话题间加空行
+                            p_tag = soup.new_tag('p')
+                            br_tag = soup.new_tag('br')
+                            p_tag.append(br_tag)
+                            prev_sibling.insert_before(p_tag)
+                    
+                    else:                                   # 判断前面元素为文本
+                        a_tag = soup.new_tag('a', href=link)
+                        a_tag.string = '+ ' + title
+                        prev_sibling.clear()
+                        prev_sibling.append(a_tag)
 
-            next_sibling.extract()
+                    title = ''
+                    prev_sibling = None
+                    child.clear()
 
-    html = replace_img_link(str(soup))
-    return html
+            # else:   # 清空无字符段落的内容；直接用child.extract()会连带后一个<p> tag被删除，属于bs的bug
+            #     child.clear()
+
+
+    return str(soup)
 
 
 def parse_article(url, **kwags):
