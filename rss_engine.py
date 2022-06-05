@@ -11,6 +11,7 @@ class RSSEngine:
 
     def __init__(self, rss_title='demo', rss_description='demo', 
                  rss_link='https://github.com/XinArkh/rss-engine', 
+                 rss_icon = None,
                  within_days=365, max_item_num=50, 
                  output='./demo.xml', database='./demo.pkl', logfile='./demo.log', 
                  double_check=False,
@@ -19,6 +20,7 @@ class RSSEngine:
         self.rss_title = rss_title
         self.rss_description = rss_description
         self.rss_link = rss_link
+        self.rss_icon = rss_icon
         self.within_days = within_days
         self.max_item_num = max_item_num
         self.output = output
@@ -135,6 +137,7 @@ class RSSEngine:
                                  link=self.rss_link, 
                                  description=self.rss_description, 
                                  lastBuildDate=datetime.datetime.now(), 
+                                 image=self.rss_icon,
                                  items=item_list)
             
             rss.write_xml(open(self.output, 'w', encoding='utf-8'), encoding='utf-8')
