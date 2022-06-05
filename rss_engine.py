@@ -137,7 +137,9 @@ class RSSEngine:
                                  link=self.rss_link, 
                                  description=self.rss_description, 
                                  lastBuildDate=datetime.datetime.now(), 
-                                 image=self.rss_icon,
+                                 image=PyRSS2Gen.Image(url=self.rss_icon, 
+                                                       title='icon', 
+                                                       link=self.rss_icon) if self.rss_icon else None,
                                  items=item_list)
             
             rss.write_xml(open(self.output, 'w', encoding='utf-8'), encoding='utf-8')
