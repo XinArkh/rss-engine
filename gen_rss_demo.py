@@ -88,7 +88,7 @@ rss = rss_engine.RSSEngine(rss_title='睡前消息',
                                     '1654092522&ver=1&signature=rrwTD7PDLmVAJCJ5n8R2Z'
                                     'fXDE1rbZyxkVPhQCnyS1icTyFQ9U*4qbUwmv9SY2SNT64DjVc5sRTLA2JRTxEUSsQ==', 
                            rss_description='睡前消息-马前卒工作室', 
-                           rss_icon='https://pic1.zhimg.com/v2-d6e9e8af50b94f57f1baf8faaf0ed884_xl.jpg?source=32738c0c'
+                           rss_icon='https://pic1.zhimg.com/v2-d6e9e8af50b94f57f1baf8faaf0ed884_xl.jpg?source=32738c0c',
                            output=output, database=database, logfile=logfile, 
                            double_check=True, 
                            verbose=True)
