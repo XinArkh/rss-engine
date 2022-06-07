@@ -24,13 +24,15 @@ def search_article(homepage, date):
     r = requests.get(homepage, params=payload, headers=headers)
     r.encoding = 'utf-8'
     soup = BeautifulSoup(r.text, 'html.parser')
-    best_title = soup.find('ul', class_='news-list').li.find('div', class_='txt-box').a.text
-    if best_title.startswith(title):
-        url = 'https://weixin.sogou.com' + \
-              soup.find('ul', class_='news-list').li.find('div', class_='txt-box').a['href']
-        return url
-    else:
-        return None
+    url = None
+    for news in soup.find('ul', class_='news-list'):
+        if not news.name == 'li':
+            continue
+        if news.find('div', class_='txt-box').a.text.startswith(title):
+            url = 'https://weixin.sogou.com' + news.find('div', class_='txt-box').a['href']
+            break
+
+    return url
 
 
 def gen_url_list(homepage, length=10):
