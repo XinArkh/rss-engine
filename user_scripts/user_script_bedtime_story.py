@@ -103,7 +103,7 @@ def prettify_article(html):
     html = remove_break_line(html)
 
     soup = BeautifulSoup(html, 'html.parser')
-    if soup.p.find('img', class_='__bg_gif'):               # 去除置顶的关注引导图片
+    if soup.p.img:                                          # 去除置顶的关注引导图片
         soup.p.clear()
 
     for child in soup.div.children:
