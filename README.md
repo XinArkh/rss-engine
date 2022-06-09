@@ -31,11 +31,9 @@ In this project, the generated RSS feed is published in GitHub Page site.
 ```bash
 crontab -e  # open editing pannel
 
-# At minute 0 past every 3rd hour. 
+# Tip: you can refer to https://crontab.guru/ to check your crontab commands
 # Redirect output to logfile.
 0/30 * * * * /PATH/TO/gen_rss_demo.sh >> /PATH/TO/rss.log
-
-> Tip: you can refer to https://crontab.guru/ to check your crontab commands.
 
 # exit editing pannel
 
