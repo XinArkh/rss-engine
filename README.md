@@ -33,7 +33,9 @@ crontab -e  # open editing pannel
 
 # At minute 0 past every 3rd hour. 
 # Redirect output to logfile.
-0 */3 * * * /PATH/TO/gen_rss_demo.sh >> /PATH/TO/rss.log
+0/30 * * * * /PATH/TO/gen_rss_demo.sh >> /PATH/TO/rss.log
+
+> Tip: you can refer to https://crontab.guru/ to check your crontab commands.
 
 # exit editing pannel
 
@@ -54,4 +56,3 @@ Write and put your own script in `user_scripts/` referring to the sample scripts
 - [Crontab.guru - The cron schedule expression editor](https://crontab.guru/)
 - [cron - How to prevent from CronJob run process twice? - Ask Ubuntu](https://askubuntu.com/questions/915690/how-to-prevent-from-cronjob-run-process-twice)
 - [linux shell if 参数 - image eye - 博客园](https://www.cnblogs.com/image-eye/archive/2011/08/20/2147015.html)
-
