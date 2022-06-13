@@ -65,6 +65,7 @@ url_list, title_prefix_list = gen_url_list([homepage1, homepage2])
 rss = rss_engine.RSSEngine(rss_title='浙江大学医学院信息公告', 
                            rss_link=homepage, 
                            rss_description='浙江大学医学院信息公告', 
+                           within_days=365*5,
                            output=output, database=database, logfile=logfile, 
                            verbose=True)
 rss.set_article_parser(parse_article)
