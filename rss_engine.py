@@ -60,7 +60,7 @@ class RSSEngine:
         """record log file"""
 
         if msg != '':
-            with open(path, 'a') as f:
+            with open(path, 'a', encoding='utf-8') as f:
                 f.writelines(msg)
 
     def write_database(self, url_set, item_list):
