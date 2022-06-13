@@ -51,6 +51,26 @@ rss.set_article_parser(parse_article)
 rss.generate_xml(url_list, title_prefix_list)
 
 
+# --- generate zju-cmm rss feed --- #
+file_name = 'zju-cmm'
+output = os.path.join(output_dir, file_name+'.xml')
+database = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name+'.pkl')
+logfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name+'.log')
+homepage1 = 'http://www.cmm.zju.edu.cn/yltx/list.htm'   # 医路同行
+homepage2 = 'http://www.cmm.zju.edu.cn/38700/list.htm'  # 研究生教育
+
+from user_scripts.user_script_cmm import gen_url_list, parse_article
+
+url_list, title_prefix_list = gen_url_list([homepage1, homepage2])
+rss = rss_engine.RSSEngine(rss_title='浙江大学医学院信息公告', 
+                           rss_link=homepage, 
+                           rss_description='浙江大学医学院信息公告', 
+                           output=output, database=database, logfile=logfile, 
+                           verbose=True)
+rss.set_article_parser(parse_article)
+rss.generate_xml(url_list, title_prefix_list)
+
+
 # --- generate jike dailypost feed --- #
 file_name = 'jike-dailypost'
 output = os.path.join(output_dir, file_name+'.xml')
