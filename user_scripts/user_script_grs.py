@@ -87,6 +87,6 @@ if __name__ == '__main__':
     for url, prefix in zip(url_list, title_prefix_list):
         print(prefix, url)
 
-    article = parse_article('http://www.grs.zju.edu.cn/2022/0601/c1335a2580931/page.htm')
+    article = parse_article('http://www.grs.zju.edu.cn/2022/0614/c1335a2594008/page.psp')
     print(article)
     print(article.keys())

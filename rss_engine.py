@@ -9,11 +9,17 @@ import url2article
 class RSSEngine:
     """RSSEngine, generate RSS feed for arbitrary source!"""
 
-    def __init__(self, rss_title='demo', rss_description='demo', 
+    def __init__(self, 
+                 rss_title='demo', 
+                 rss_description='demo', 
                  rss_link='https://github.com/XinArkh/rss-engine', 
-                 rss_icon = None,
-                 within_days=365, max_item_num=50, 
-                 output='./demo.xml', database='./demo.pkl', logfile='./demo.log', 
+                 rss_icon=None,
+                 timezone=+8,
+                 within_days=365, 
+                 max_item_num=10, 
+                 output='./demo.xml', 
+                 database='./demo.pkl', 
+                 logfile='./demo.log', 
                  double_check=False,
                  verbose=False
                  ):
@@ -21,6 +27,7 @@ class RSSEngine:
         self.rss_description = rss_description
         self.rss_link = rss_link
         self.rss_icon = rss_icon
+        self.timezone = datetime.timezone(datetime.timedelta(hours=timezone))
         self.within_days = within_days
         self.max_item_num = max_item_num
         self.output = output
@@ -48,16 +55,22 @@ class RSSEngine:
         else:
             return False
 
+    def local_time(self):
+        """Get current time for the given timezone"""
+        
+        utc_time = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
+        return utc_time.astimezone(self.timezone)
+
     def is_article_up_to_date(self, article_pubdate):
         """Whether the article is up to date"""
 
-        if datetime.datetime.now() - article_pubdate <= datetime.timedelta(days=self.within_days):
+        if self.local_time() - article_pubdate <= datetime.timedelta(days=self.within_days):
             return True
         else:
             return False
         
     def log(self, msg: str, path: str):
-        """record log file"""
+        """Record log file"""
 
         if msg != '':
             with open(path, 'a', encoding='utf-8') as f:
@@ -101,7 +114,8 @@ class RSSEngine:
 
                     article_link = article['url']
                     article_title = title_prefix + article['title']
-                    article_pubdate = datetime.datetime.strptime(article['date'], '%Y-%m-%d %H:%M:%S')
+                    article_pubdate = datetime.datetime.strptime(article['date'], 
+                                                                 '%Y-%m-%d %H:%M:%S').replace(tzinfo=self.timezone)
                     article_description = article['content']
 
                     if self.double_check:
@@ -112,20 +126,26 @@ class RSSEngine:
                         item_list.append(PyRSS2Gen.RSSItem(title=article_title, 
                                                            link=article_link, 
                                                            description=article_description, 
-                                                           guid=article_link, 
-                                                           pubDate=article_pubdate))
+                                                           guid=article_link,
+                                                           # Input date must be in GMT.
+                                                           pubDate=article_pubdate.astimezone(datetime.timezone.utc)
+                                                           )
+                        )
                         log_str += 'item added: ' + article_title +' ' + str(article['date']) +' ' + article_link + '\n'
                         if self.verbose: print('item added:', article_title, article['date'], article_link)
                         item_num += 1
-                        url_set.add(url)
+                    
                     else:
                         log_str += 'item out of date, skipped: ' + article_title +' ' + str(article['date']) +' ' + article_link + '\n'
                         if self.verbose: print('item out of date, skipped:', article_title, article['date'], article_link)
+                    
+                    url_set.add(url)
+
                 except Exception as e:
                     log_str += 'item add failed: ' + article_title + ' ' + str(article['date']) +' ' + url + ' : ' + str(e) + '\n'
                     if self.verbose: print('item add failed:', article_title, article['date'], url, ':', str(e))
 
-            time.sleep(0.01) # avoid network blockdown
+            time.sleep(0.01) # avoid anti-spider
 
         if item_num > 0:
             item_list.sort(key=lambda rss_item: rss_item.pubDate, reverse=True) # descending sorting
@@ -136,7 +156,7 @@ class RSSEngine:
             rss = PyRSS2Gen.RSS2(title=self.rss_title, 
                                  link=self.rss_link, 
                                  description=self.rss_description, 
-                                 lastBuildDate=datetime.datetime.now(), 
+                                 lastBuildDate=datetime.datetime.utcnow(),
                                  image=PyRSS2Gen.Image(url=self.rss_icon, 
                                                        title='icon', 
                                                        link=self.rss_icon) if self.rss_icon else None,
@@ -153,8 +173,8 @@ class RSSEngine:
 
 if __name__ == '__main__':
     # example
-    from user_scripts.user_script_grs import gen_url_list
+    from user_scripts.user_script_grs import gen_url_list, parse_article
     url_list, title_prefix_list = gen_url_list('http://www.grs.zju.edu.cn/')
-    # generate_xml(url_list, title_prefix_list, verbose=True)
     rss = RSSEngine(verbose=True)
+    rss.set_article_parser(parse_article)
     rss.generate_xml(url_list, title_prefix_list)
