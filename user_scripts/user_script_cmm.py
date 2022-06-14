@@ -183,10 +183,10 @@ def gen_url_list(homepage):
 
 def match_pubdate(html):
     '''
-    尝试在html文本中匹配【发布日期/时间：yyyy-mm-dd】格式的字符片段，若匹配到则将其作为发布时间返回
+    尝试在html文本中匹配【发布日期】片段，若匹配到则将其作为发布时间返回
     p.s. api自带的时间提取功能错误率比较高，经常把正文中的时间提取为发表时间
     '''
-    searchObj = re.search(r'发布日期：[0-9]{4}年[0-9]{2}月[0-9]{2}日 [0-9]{2}:[0-9]{2}', html)
+    searchObj = re.search(r'发布日期：[0-9]{4}年[0-9]{2}月[0-9]{2}日 [0-9]{1,2}:[0-9]{2}', html)
 
     if searchObj:
         pubdate = datetime.datetime.strptime(searchObj.group(0)[5:], '%Y年%m月%d日 %H:%M')
@@ -230,6 +230,6 @@ if __name__ == '__main__':
     for url, title_prefix in zip(url_list, title_prefix_list):
         print(title_prefix, url)
 
-    article = parse_article('http://www.cmm.zju.edu.cn/2022/0516/c38816a2546489/page.htm')
+    article = parse_article('http://www.cmm.zju.edu.cn/2022/0613/c38818a2591359/page.htm')
     print(article)
     print(article.keys())
