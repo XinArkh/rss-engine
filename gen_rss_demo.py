@@ -85,6 +85,7 @@ url_list = gen_url_list(homepage)
 rss = rss_engine.RSSEngine(rss_title='一觉醒来世界发生了什么-即刻App', 
                            rss_link=homepage, 
                            rss_description='一觉醒来世界发生了什么-即刻App', 
+                           rss_icon='https://m.okjike.com/favicon-32x32.png',
                            output=output, database=database, logfile=logfile, 
                            verbose=True)
 rss.set_article_parser(parse_article)
