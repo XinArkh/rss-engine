@@ -74,13 +74,14 @@ def parse_url(url, **kwags):
 
 def replace_img_link(html):
     """将推文图片链接转换为外链可以访问的形式
-    参考文章：https://blog.csdn.net/yanjiee/article/details/52938144
     """
 
+    # 方法一：https://blog.csdn.net/yanjiee/article/details/52938144
     # return re.sub(r'mmbiz\.qpic\.cn', 
     #               r'read.html5.qq.com/image?src=forum&q=5&r=0&imgflag=7&imageUrl=http://mmbiz.qpic.cn', 
     #               html
     #               )
+    # 方法二：https://bjun.tech/blog/xphp/31
     soup = BeautifulSoup(html, 'html.parser')
     for img in soup.find_all('img'):
         img['referrerpolicy'] = 'same-origin'
@@ -184,6 +185,6 @@ if __name__ == '__main__':
     for url in url_list:
         print(url)
 
-    article = parse_article(url, headers=headers)
+    article = parse_article(url_list[0], headers=headers)
     print(article)
     print(article.keys())
