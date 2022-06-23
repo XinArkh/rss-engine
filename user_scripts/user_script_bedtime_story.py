@@ -111,38 +111,38 @@ def prettify_article(html):
         if child.get_text().startswith('长按或扫码') or child.get_text().startswith('欢迎点击'):
             break
 
-        if child.name == 'p':
+        if child.name == 'p' or str(child.name).startswith('h'):
             if child.get_text():
-                if not child.get_text().startswith('http'): # child为文本或标题
+                if not child.get_text().startswith('http'): # child为文本，包括带数字的大标题或不带数字的小标题
                     title = child.get_text()
-                    if re.match(r'\d+\..*$', title):        # 如果是标题，预先将其改为<h3>，防止没有链接的情况
+                    if re.match(r'\d+\..*$', title):        # 如果是大标题，预先将其标签改为<h3>
                         child.name='h3'
-                    else:                                   # 如果是文本
-                        if str(child.previous_sibling) == '<p><br/></p>':  # 如果前面是空行，将其去除
+                    else:                                   # 如果是小标题
+                        if not child.name == 'p':           # 如果其标签不是<p>，则将其转化为<p>
+                            child.name = 'p'
+                        if str(child.previous_sibling) == '<p><br/></p>':  # 如果前面是空行（转化自上一条新闻的链接标签），将其去除
                             child.previous_sibling.clear()
-                        # 如果不是空行，说明上一条目没有链接
+                        # 如果不是空行，说明上一条目没有链接，不需要再去除
                     prev_sibling = child
                 else:                                       # child为链接
                     link = child.get_text()
-                    link = re.sub(r' ', r'', link)     # 去除连接末尾的 
+                    link = re.sub(r' ', r'', link)     # 去除链接末尾的 
 
-                    if re.match(r'\d+\..*$', title):        # 判断前面元素为标题，为<h3>增加超链接
+                    if re.match(r'\d+\..*$', title):        # 判断前面的元素为大标题，为其增加超链接
                         a_tag = soup.new_tag('a', href=link)
                         a_tag.string = title
                         prev_sibling.clear()
                         prev_sibling.append(a_tag)
-
-                    else:                                   # 判断前面元素非标题，可能是文本或没有小标题
+                    else:                                   # 判断前面元素非大标题，可能是小标题或根本没有小标题
                         a_tag = soup.new_tag('a', href=link)
                         a_tag.string = '+ ' + title
-
-                        if title != '':                     # 有文本，为其标签添加超链接
+                        if title != '':                     # 有小标题，为其添加超链接
                             prev_sibling.clear()
                             prev_sibling.append(a_tag)
-                        else:                               # 无文本，将前面残余的空行转换为超链接
+                        else:                               # 无小标题，将前面残余的空行（转化自上一条新闻的链接标签）转换为超链接小标题
                             assert str(child.previous_sibling.previous_sibling) == '<p><br/></p>'
                             child.previous_sibling.previous_sibling.clear()
-                            child.previous_sibling.previous_sibling.insert_before(a_tag)
+                            child.previous_sibling.previous_sibling.append(a_tag)
 
                     child.clear()                       # 将原本的链接<p>标签转换为话题间的空行
                     br_tag = soup.new_tag('br')
