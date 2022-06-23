@@ -109,6 +109,10 @@ def prettify_article(html):
 
     for child in soup.div.children:
         if child.get_text().startswith('长按或扫码') or child.get_text().startswith('欢迎点击'):
+            p_tag = soup.new_tag('p')
+            br_tag = soup.new_tag('br')
+            p_tag.append(br_tag)
+            child.insert_before(p_tag)
             break
 
         if child.name == 'p' or str(child.name).startswith('h'):
