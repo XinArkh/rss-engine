@@ -106,12 +106,19 @@ class RSSEngine:
         item_num = 0
         for url, title_prefix in zip(url_list, title_prefix_list):
             if not self.is_url_already_collected(url, url_set):
+                # try parsing url
                 try:
                     if self.article_parser_params:
                         article = self.article_parser(url, **self.article_parser_params)
                     else:
                         article = self.article_parser(url)
+                except Exception as e:
+                    log_str += 'item parsing failed: ' + title_prefix + url + '\n'
+                    if self.verbose: print('item parsing failed:', title_prefix, url, ':', str(e))
+                    continue
 
+                # try add article
+                try:
                     article_link = article['url']
                     article_title = title_prefix + article['title']
                     article_pubdate = datetime.datetime.strptime(article['date'], 
@@ -145,7 +152,7 @@ class RSSEngine:
                     log_str += 'item add failed: ' + article_title + ' ' + str(article['date']) +' ' + url + ' : ' + str(e) + '\n'
                     if self.verbose: print('item add failed:', article_title, article['date'], url, ':', str(e))
 
-            time.sleep(0.01) # avoid anti-spider
+                time.sleep(0.01) # avoid anti-spider
 
         if item_num > 0:
             item_list.sort(key=lambda rss_item: rss_item.pubDate, reverse=True) # descending sorting
