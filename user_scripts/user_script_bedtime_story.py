@@ -46,7 +46,7 @@ def gen_url_list(homepage, length=10):
         url = search_article(homepage, date)
         if url:
             url_list.append(url)
-        time.sleep(0.05)
+        time.sleep(0.1)
 
     return url_list
 
