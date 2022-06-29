@@ -60,6 +60,6 @@ if __name__ == '__main__':
     for url in url_list:
         print(url)
 
-    article = parse_article('https://www.okjike.com/medium/62961d36bf5ecc46ef19e885')
+    article = parse_article(url_list[0])
     print(article)
     print(article.keys())
