@@ -26,7 +26,7 @@ def search_article(homepage, date):
     soup = BeautifulSoup(r.text, 'html.parser')
     url = None
     if not soup.find('ul', class_='news-list'):
-        raise('Sogou search error!')
+        raise Exception('Sogou search error!')
     for news in soup.find('ul', class_='news-list'):
         if not news.name == 'li':
             continue
