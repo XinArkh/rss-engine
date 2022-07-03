@@ -15,7 +15,7 @@ def search_article(homepage, date):
     """在搜狗搜索结果中查看有无所需日期的文章，如有则返回其跳转链接
     """
 
-    headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36'}
+    headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'}
     if platform.system() == 'Windows':
         title = '睡前消息【%s】' % date.strftime('%Y-%#m-%#d')
     else:
@@ -25,6 +25,8 @@ def search_article(homepage, date):
     r.encoding = 'utf-8'
     soup = BeautifulSoup(r.text, 'html.parser')
     url = None
+    if not soup.find('ul', class_='news-list'):
+        raise('Sogou search error!')
     for news in soup.find('ul', class_='news-list'):
         if not news.name == 'li':
             continue
