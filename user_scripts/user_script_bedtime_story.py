@@ -164,6 +164,7 @@ def prettify_article(html):
 def parse_article(url, **kwags):
     """获取文章信息，并返回对应字典"""
     parsed_url = parse_url(url, **kwags)
+    time.sleep(0.1)
     r = requests.get(parsed_url, **kwags)
 
     import os, sys
