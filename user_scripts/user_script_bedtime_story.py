@@ -78,11 +78,12 @@ def replace_img_link(html):
     """将推文图片链接转换为外链可以访问的形式
     """
 
-    # 方法一：https://blog.csdn.net/yanjiee/article/details/52938144
+    # 方法一：https://blog.csdn.net/yanjiee/article/details/52938144（失效）
     # return re.sub(r'mmbiz\.qpic\.cn', 
     #               r'read.html5.qq.com/image?src=forum&q=5&r=0&imgflag=7&imageUrl=http://mmbiz.qpic.cn', 
     #               html
     #               )
+    # 
     # 方法二：https://bjun.tech/blog/xphp/31
     soup = BeautifulSoup(html, 'html.parser')
     for img in soup.find_all('img'):
@@ -184,6 +185,7 @@ def parse_article(url, **kwags):
 if __name__ == '__main__':
     homepage = 'https://weixin.sogou.com/weixin'
     headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36',
+               'referer': 'https://weixin.sogou.com/weixin?type=2&s_from=input&query=%E7%9D%A1%E5%89%8D%E6%B6%88%E6%81%AF&ie=utf8&_sug_=n&_sug_type_=',
                'cookie': 'SUID=0C91AE272208990A000000005C7145DC; SUV=1550927324797555; ssuid=8275997946; LSTMV=241%2C183; LCLKINT=5135; IPLOC=CN3301; weixinIndexVisited=1; ABTEST=0|1654062326|v1; SNUID=67E1DE5770758F331506DFA470A2FCB2; JSESSIONID=aaaSeJsIn-ln9fmk-p6dy; ariaDefaultTheme=undefined'
               }
     url_list = gen_url_list(homepage, length=10)
