@@ -85,7 +85,7 @@ url_list = gen_url_list(homepage)
 rss = rss_engine.RSSEngine(rss_title='一觉醒来世界发生了什么-即刻App', 
                            rss_link=homepage, 
                            rss_description='一觉醒来世界发生了什么-即刻App', 
-                           rss_icon='https://m.okjike.com/favicon-32x32.png',
+                           rss_icon='https://cdnv2.ruguoapp.com/Fm9qRTxKKTF1Pjv67aSHGYsX5Fgr.jpeg?imageMogr2/auto-orient/heic-exif/1/format/jpeg/thumbnail/!300x300r/gravity/Center/crop/!300x300a0a0',
                             max_item_num=12, 
                            output=output, database=database, logfile=logfile, 
                            verbose=True)
