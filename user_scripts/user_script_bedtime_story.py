@@ -65,6 +65,9 @@ class GetURLs:
         for item in self.soup_feeddd.find_all('item'):
             if item.title.text.startswith(title):
                 url = item.link.text
+                # https协议的链接生成rss文件之后无法被阅读器解析，原因未知
+                if url.startswith('https'):
+                    url = 'http' + url[5:]
                 break
         return url
 
