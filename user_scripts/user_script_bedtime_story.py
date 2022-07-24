@@ -183,9 +183,12 @@ def prettify_article(html):
                             prev_sibling.clear()
                             prev_sibling.append(a_tag)
                         else:                               # 无小标题，将前面残余的空行（转化自上一条新闻的链接标签）转换为超链接小标题
-                            assert str(child.previous_sibling.previous_sibling) == '<p><br/></p>'
-                            child.previous_sibling.previous_sibling.clear()
-                            child.previous_sibling.previous_sibling.append(a_tag)
+                            # assert str(child.previous_sibling.previous_sibling) == '<p><br/></p>'
+                            if str(child.previous_sibling.previous_sibling) == '<p><br/></p>':
+                                child.previous_sibling.previous_sibling.clear()
+                                child.previous_sibling.previous_sibling.append(a_tag)
+                            # 还可能存在条目（包括大小标题及无标题）含有两个链接的情况，这里直接忽略
+                            # 若含有三个链接，此处逻辑依然有误，需要注意，但目前不考虑这么复杂的情况了
 
                     child.clear()                       # 将原本的链接<p>标签转换为话题间的空行
                     br_tag = soup.new_tag('br')
