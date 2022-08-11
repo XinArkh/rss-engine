@@ -71,7 +71,7 @@ class GetURLs:
     def get_url_by_title_sogo(self, title):
         """通过搜狗微信搜索尝试获取文章URL"""
 
-        payload = {'type': '2', 'query': title}
+        payload = {'type': '2', 'query': title, 's_from': 'input', 'ie': 'utf8', '_sug_': 'n', '_sug_type_': ''}
         r = self.sess_sogo.get(self.homepage_sogo, params=payload)
         r.encoding = 'utf-8'
 

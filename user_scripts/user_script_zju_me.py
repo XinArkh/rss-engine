@@ -109,19 +109,11 @@ def parse_article(url):
     
     import os, sys
     sys.path.extend([os.path.dirname(os.path.dirname(os.path.abspath(__file__)))])
-    from user_api import url2io_token, url2io_api
+    import url2article
+
+    article_info = url2article.parse_article(url)
 
     html = get_url_content(url)
-    query_string = {'token': url2io_token, 'url': url,}
-    headers_url2io = { 'content-type': "text/html", }
-    article = requests.post(url2io_api, params=query_string, headers=headers_url2io, data=html.encode('utf-8'))
-
-    if article.status_code != 200:
-        article_info = eval(article.text)
-        raise Exception('%s: [Response %d] %s' % (article_info['error'], article.status_code, article_info['msg']))
-
-    article_info = article.json().copy()
-
     pubdate = match_pubdate(html)
     if pubdate:
         article_info['date'] = str(pubdate)
@@ -140,6 +132,6 @@ if __name__ == '__main__':
     for url, title_prefix in zip(url_list, title_prefix_list):
         print(title_prefix, url)
 
-    article = parse_article('http://me.zju.edu.cn/meoffice/2022/0509/c6469a2527162/page.htm')
+    article = parse_article('http://kyjs.zju.edu.cn/srts/#/home/news/8692?type=14')
     print(article)
     print(article.keys())
