@@ -11,6 +11,28 @@ output_dir = args.output
 
 
 ## -------------------------------------------------- ##
+# --- generate sspai rss feed --- #
+file_name = 'sspai'
+output = os.path.join(output_dir, file_name+'.xml')
+database = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name+'.pkl')
+logfile = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name+'.log')
+homepage = 'https://sspai.com/feed'
+
+from user_scripts.user_script_sspai import gen_url_list, parse_article
+
+url_list = gen_url_list(homepage)
+rss = rss_engine.RSSEngine(rss_title='少数派', 
+                           rss_link='https://sspai.com', 
+                           rss_description='少数派RSS Feed-文章完整抓取版', 
+                           rss_language='zh-CN',
+                           rss_managingEditor='contact@sspai.com (少数派)',
+                           rss_icon='https://t75.pixhost.to/thumbs/126/299184373_ouezg12u_400x400.png',
+                           output=output, database=database, logfile=logfile, 
+                           verbose=True)
+rss.set_article_parser(parse_article, homepage=homepage)
+rss.generate_xml(url_list)
+
+
 # --- generate zju-me rss feed --- #
 file_name = 'zju-me'
 output = os.path.join(output_dir, file_name+'.xml')
@@ -85,8 +107,7 @@ url_list = gen_url_list(homepage)
 rss = rss_engine.RSSEngine(rss_title='一觉醒来世界发生了什么-即刻App', 
                            rss_link=homepage, 
                            rss_description='一觉醒来世界发生了什么-即刻App', 
-                           rss_icon='https://cdnv2.ruguoapp.com/Fm9qRTxKKTF1Pjv67aSHGYsX5Fgr.jpeg?imageMogr2/auto-orient/'
-                                    'heic-exif/1/format/jpeg/thumbnail/!300x300r/gravity/Center/crop/!300x300a0a0',
+                           rss_icon='https://t75.pixhost.to/thumbs/127/299240346_300x300a0a0.jpg',
                            max_item_num=12, 
                            output=output, database=database, logfile=logfile, 
                            verbose=True)
@@ -107,7 +128,7 @@ url_list = get_urls()
 rss = rss_engine.RSSEngine(rss_title='睡前消息', 
                            rss_link='https://www.xinwu.me/rss/bedtime-story.xml', 
                            rss_description='睡前消息-马前卒工作室', 
-                           rss_icon='https://pic1.zhimg.com/v2-d6e9e8af50b94f57f1baf8faaf0ed884_xl.jpg?source=32738c0c',
+                           rss_icon='https://t75.pixhost.to/thumbs/127/299239783_v2-d6e9e8af50b94f57f1baf8faaf0ed884_xl.jpg',
                            output=output, database=database, logfile=logfile, 
                            double_check=True, 
                            verbose=True)
