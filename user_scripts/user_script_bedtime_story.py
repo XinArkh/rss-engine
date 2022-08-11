@@ -40,7 +40,7 @@ class GetURLs:
         self.sess_sogo.mount('http://', adapter)
         self.sess_sogo.mount('https://', adapter)
 
-    def __call__(self, length=10):
+    def __call__(self, length=5):
         url_list = []
         for l in range(length):
             date = datetime.date.today() - datetime.timedelta(days=l)
@@ -73,6 +73,7 @@ class GetURLs:
 
         payload = {'type': '2', 'query': title, 's_from': 'input', 'ie': 'utf8', '_sug_': 'n', '_sug_type_': ''}
         r = self.sess_sogo.get(self.homepage_sogo, params=payload)
+        time.sleep(0.1)
         r.encoding = 'utf-8'
 
         soup = BeautifulSoup(r.text, 'html.parser')
