@@ -203,16 +203,17 @@ def prettify_article(html):
 def parse_article(url, **kwags):
     """获取文章内容，并以字典形式返回"""
 
+    import os, sys
+    sys.path.extend([os.path.dirname(os.path.dirname(os.path.abspath(__file__)))])
+    import url2article
+    article =  url2article.parse_article(url, **kwags)
+
     r = requests.get(url, **kwags)
     time.sleep(0.1)
     soup = BeautifulSoup(r.text, 'html.parser')
     title = soup.h1.text
     title = re.sub(r' |\n', '', title)
     
-    import os, sys
-    sys.path.extend([os.path.dirname(os.path.dirname(os.path.abspath(__file__)))])
-    import url2article
-    article =  url2article.parse_article(url, **kwags)
     article['title'] = title
     article['content'] = prettify_article(article['content'])
 
