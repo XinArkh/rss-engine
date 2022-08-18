@@ -73,7 +73,8 @@ class GetURLs:
 
         payload = {'type': '2', 'query': title, 's_from': 'input', 'ie': 'utf8', '_sug_': 'n', '_sug_type_': ''}
         r = self.sess_sogo.get(self.homepage_sogo, params=payload)
-        time.sleep(0.1)
+        # print('get:', title, r.url)
+        time.sleep(0.2+random.random()) # to avoid anti-spider
         r.encoding = 'utf-8'
 
         soup = BeautifulSoup(r.text, 'html.parser')
