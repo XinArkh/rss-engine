@@ -15,7 +15,7 @@ OUTPUT_PATH=${REPO_PATH}"rss/"
 
 echo `date`
 echo "--- updating rss feed... ---"
-python ${RSS_ENGINE_PATH}gen_rss_demo.py -o $OUTPUT_PATH
+python ${RSS_ENGINE_PATH}run_script.py -o $OUTPUT_PATH
 echo "--- rss feed updated! ---"
 
 # upload rss feed to github repo
