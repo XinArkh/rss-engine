@@ -12,6 +12,10 @@ from requests.adapters import HTTPAdapter, Retry
 from faker import Faker
 from bs4 import BeautifulSoup
 
+import sys 
+sys.path.append("..") 
+import ym_verifycode
+
 
 class GetURLs:
     """获取一段时间内睡前消息文章的URL列表"""
@@ -29,11 +33,11 @@ class GetURLs:
         # 搜狗本身只需要user-agent即可访问，访问微信推文需要referer和cookie，这里为了方便集成在一起
         self.sess_sogo.headers = {'user-agent': Faker().user_agent(), 
                                   'referer': 'https://weixin.sogou.com/weixin?type=2&s_from=input&query='
-                                    '%E7%9D%A1%E5%89%8D%E6%B6%88%E6%81%AF&ie=utf8&_sug_=n&_sug_type_=',
+                                     '%E7%9D%A1%E5%89%8D%E6%B6%88%E6%81%AF&ie=utf8&_sug_=n&_sug_type_=',
                                   'cookie': 'SUID=0C91AE272208990A000000005C7145DC; SUV=1550927324797555; '
-                                    'ssuid=8275997946; LSTMV=241%2C183; LCLKINT=5135; IPLOC=CN3301; weixinIndexVisited=1; '
-                                    'ABTEST=0|1654062326|v1; SNUID=67E1DE5770758F331506DFA470A2FCB2; JSESSIONID=aaaSeJsIn-ln9fmk-p6dy; '
-                                    'ariaDefaultTheme=undefined'
+                                     'ssuid=8275997946; LSTMV=241%2C183; LCLKINT=5135; IPLOC=CN3301; weixinIndexVisited=1; '
+                                     'ABTEST=0|1654062326|v1; SNUID=67E1DE5770758F331506DFA470A2FCB2; JSESSIONID=aaaSeJsIn-ln9fmk-p6dy; '
+                                     'ariaDefaultTheme=undefined'
                                  }
         retry = Retry(connect=3, backoff_factor=0.5)
         adapter = HTTPAdapter(max_retries=retry)
@@ -73,14 +77,40 @@ class GetURLs:
 
         payload = {'type': '2', 'query': title, 's_from': 'input', 'ie': 'utf8', '_sug_': 'n', '_sug_type_': ''}
         r = self.sess_sogo.get(self.homepage_sogo, params=payload)
-        # print('get:', title, r.url)
         time.sleep(1+random.random()) # to avoid anti-spider
         r.encoding = 'utf-8'
+        print('get:', title, r.url)
 
         soup = BeautifulSoup(r.text, 'html.parser')
         url = None
+        # 若出现搜狗爬虫验证页面，尝试提交验证码通过，最多三次
+        max_loop = 3
+        while (not soup.find('ul', class_='news-list')) and max_loop > 0:
+            max_loop -= 1
+
+            if not soup.find('img', id='seccodeImage'): # 存在一定几率验证页面无此项，跳过直接在下个循环重新尝试
+                time.sleep(1+random.random()) # to avoid anti-spider
+                # max_loop += 1
+                continue
+
+            img_url = 'https://weixin.sogou.com/antispider/' + soup.find('img', id='seccodeImage')['src']
+            img_bin = self.download_img_bin(img_url)
+            verify_code = ym_verifycode.identify_verifycode(img_bin)
+
+            src_url = re.search(r'\?from=(.*?)&antip=wx_js', r.url).group(1)
+            auuid = re.search(r'var auuid = "(.*?)";', r.text).group(1)
+
+            r = self.post_verifycode(verify_code, src_url, auuid)
+            time.sleep(1+random.random()) # to avoid anti-spider
+            r.encoding = 'utf-8'
+
+            soup = BeautifulSoup(r.text, 'html.parser')
+            if r.text.startswith('{"code":'):
+                break
+
         if not soup.find('ul', class_='news-list'):
-            raise Exception('Sogo search error!')
+            raise Exception('Sogo anti-spider error!')
+
         for news in soup.find('ul', class_='news-list'):
             if not news.name == 'li':
                 continue
@@ -91,6 +121,27 @@ class GetURLs:
         parsed_url = self.parse_url_sogo(url) if url else None
 
         return parsed_url
+
+    def download_img_bin(self, img_url):
+        r = self.sess_sogo.get(img_url)
+        img_bin = r.content
+        
+        return img_bin
+        
+    def post_verifycode(self, verify_code, src_url, auuid):
+        post_url = 'https://weixin.sogou.com/antispider/thank.php'
+        payload = {
+            'c': verify_code,
+            'r': src_url,
+            'p': 'wx_js',
+            'v': '5',
+            'suuid': '',
+            'auuid': auuid
+        }
+        r = self.sess_sogo.post(post_url, params=payload)
+
+        return r
+
 
     def parse_url_sogo(self, url):
         """解析搜狗跳转链接，转换为真实链接
