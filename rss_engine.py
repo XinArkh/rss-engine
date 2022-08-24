@@ -232,8 +232,8 @@ class RSSEngine:
 
 if __name__ == '__main__':
     # example
-    from user_scripts.user_script_grs import gen_url_list, parse_article
-    url_list, title_prefix_list = gen_url_list('http://www.grs.zju.edu.cn/')
+    from user_scripts.user_script_jike_dailypost import gen_url_list, parse_article
+    url_list = gen_url_list('https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68')
     rss = RSSEngine(verbose=True)
     rss.set_article_parser(parse_article)
-    rss.generate_xml(url_list, title_prefix_list)
+    rss.generate_xml(url_list)
