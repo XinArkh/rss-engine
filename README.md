@@ -1,17 +1,19 @@
-# rss-engine: A Python framework for generating and deploying RSS feeds
+# RSSEngine: A lightweight RSS feed generator
 
-A Python framework for generating and deploying RSS feeds. You can also easily and rapidly set up new RSS feeds with this framework!
+RSSEngine is a lightweight and extensible RSS feed generator, implemented by Python language. 
 
-In this project, the generated RSS feed is published in GitHub Page site.
+With RSSEngine, you can easily and rapidly generate RSS feed for arbitrary websites, with your custom scripts.
 
-## Overview
+RSSEngine is powered by [PyRSS2Gen](http://www.dalkescientific.com/Python/PyRSS2Gen.html).
 
-- `rss_engine.py`: core code of the framework, generating .xml file by calling its internal functions.
-- `user_scripts/`: user defined scripts, assigning items to be added in RSS feed.
-- `url2article.py`: parsing website contents and return relevant data. The API service provided by [URL2io](http://url2io.applinzi.com/) is utilized.
-- `user_api.py`: user settings for URL2io API
-- `gen_rss_demo.py`: Python script to call relevant functions and generate RSS feed
-- `gen_rss_demo.sh`: shell (ash) script to call `gen_rss_demo.py`
+## Existing Feeds
+
+- 睡前消息-马前卒工作室: [https://www.xinwu.me/rss/bedtime-story.xml](https://www.xinwu.me/rss/bedtime-story.xml)
+- 即刻App-一觉醒来世界发生了什么: [https://www.xinwu.me/rss/jike-dailypost.xml](https://www.xinwu.me/rss/jike-dailypost.xml)
+- 少数派-全文版: [https://www.xinwu.me/rss/sspai.xml](https://www.xinwu.me/rss/sspai.xml)
+- 浙江大学医学院通知: [xinwu.me/rss/zju-cmm.xml](xinwu.me/rss/zju-cmm.xml)
+- 浙江大学研究生院通知: [xinwu.me/rss/zju-grs.xml](xinwu.me/rss/zju-grs.xml)
+- 浙江大学机械工程学院通知: [https://www.xinwu.me/rss/zju-me.xml](https://www.xinwu.me/rss/zju-me.xml)
 
 ## Prerequisite
 
@@ -19,23 +21,25 @@ In this project, the generated RSS feed is published in GitHub Page site.
   - requests
   - beautifulsoup4
   - PyRSS2Gen
+  
+  Custom user scripts may induce extra modules as well.
 
 ## Deployment
 
-1. Sign up at URL2io and replace with valid API token in `user_api.py` 
-2. Clone this repository and your GitHub Pages repository at you server (OpenWRT@RasPi in my env)
-3. Configure `gen_rss_demo.sh`, set PATHs actual paths in your server
-4. set executing permission of `gen_rss_demo.sh` (`chmod +x gen_rss_demo.sh`)
-5. Use Linux `crontab` command to set periodical job:
+The following procedure shows how to deploy RSSEngine in a Linux server. 
+
+1. Fill in your API tokens in `user_api.py` 
+2. Clone this repository and your GitHub Pages (for example) repository in you own server (OpenWRT@RasPi in my case)
+3. Edit `run_script.sh`, set relevant paths in your server
+4. Add executing permission for `run_script.sh` (`chmod +x gen_rss_demo.sh`)
+5. Use Linux `crontab` command to set a periodical job:
 
 ```bash
 crontab -e  # open editing pannel
-
 # Tip: you can refer to https://crontab.guru/ to check your crontab commands
 # Redirect output to logfile.
-0/30 * * * * /PATH/TO/gen_rss_demo.sh >> /PATH/TO/rss.log
-
-# exit editing pannel
+>>> 0/30 * * * * /PATH/TO/run_script.sh >> /PATH/TO/rss.log
+# Now you can exit the editing pannel
 
 crontab -l  # list tasks
 service cron restart
@@ -43,7 +47,7 @@ service cron restart
 
 ## Custom Feeds
 
-Write and put your own script in `user_scripts/` referring to the sample scripts. Then register your script in `gen_rss_demo.py`.
+Write and put your own script in `user_scripts/` and register it in `run_script.py`. It's pretty easy, you can refer to existing sample scripts.
 
 ## Reference Links
 
