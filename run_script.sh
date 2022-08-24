@@ -9,8 +9,8 @@ else
 touch $TMP_RSS_LOCK
 
 # run python script to update rss feed
-RSS_ENGINE_PATH="/root/rss_feed/rss-engine/"
-REPO_PATH="/root/rss_feed/XinArkh.github.io/"
+RSS_ENGINE_PATH="/root/rss/rss-engine/"
+REPO_PATH="/root/rss/XinArkh.github.io/"
 OUTPUT_PATH=${REPO_PATH}"rss/"
 
 echo `date`
