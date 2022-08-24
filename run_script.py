@@ -5,21 +5,35 @@ import rss_engine
 
 if not os.path.exists(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output')):
     os.mkdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output'))
+
 parser = argparse.ArgumentParser(description='Generate rss feed.')
 parser.add_argument('-o', '--output', 
-                    help='Output directory path of the rss feed.', 
+                    help='Output directory of the rss feed (.xml).', 
                     type=str, 
-                    default=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output'))
+                    default=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output')
+                    )
+parser.add_argument('-d', '--database', 
+                    help='Database directory of the rss feed (.pkl).', 
+                    type=str, 
+                    default=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output')
+                    )
+parser.add_argument('-l', '--log', 
+                    help='Log directory of the rss feed (.log).', 
+                    type=str, 
+                    default=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'output')
+                    )
 args = parser.parse_args()
 output_dir = args.output
+database_dir = args.database
+log_dir = args.log
 
 
 ## -------------------------------------------------- ##
 # --- generate sspai rss feed --- #
 file_name = 'sspai'
 output = os.path.join(output_dir, file_name+'.xml')
-database = os.path.join(output_dir, file_name+'.pkl')
-logfile = os.path.join(output_dir, file_name+'.log')
+database = os.path.join(database_dir, file_name+'.pkl')
+logfile = os.path.join(log_dir, file_name+'.log')
 homepage = 'https://sspai.com/feed'
 
 from user_scripts.user_script_sspai import gen_url_list, parse_article
@@ -40,8 +54,8 @@ rss.generate_xml(url_list)
 # --- generate zju-me rss feed --- #
 file_name = 'zju-me'
 output = os.path.join(output_dir, file_name+'.xml')
-database = os.path.join(output_dir, file_name+'.pkl')
-logfile = os.path.join(output_dir, file_name+'.log')
+database = os.path.join(database_dir, file_name+'.pkl')
+logfile = os.path.join(log_dir, file_name+'.log')
 homepage1 = 'http://me.zju.edu.cn/meoffice/'                # 通知公告
 homepage2 = 'http://me.zju.edu.cn/meoffice/6440/list.htm'   # 研究生教育
 homepage3 = 'http://me.zju.edu.cn/meoffice/6469/list.htm'   # 学生工作
@@ -61,8 +75,8 @@ rss.generate_xml(url_list, title_prefix_list)
 # --- generate zju-grs rss feed --- #
 file_name = 'zju-grs'
 output = os.path.join(output_dir, file_name+'.xml')
-database = os.path.join(output_dir, file_name+'.pkl')
-logfile = os.path.join(output_dir, file_name+'.log')
+database = os.path.join(database_dir, file_name+'.pkl')
+logfile = os.path.join(log_dir, file_name+'.log')
 homepage = 'http://www.grs.zju.edu.cn/'
 
 from user_scripts.user_script_zju_grs import gen_url_list, parse_article
@@ -80,8 +94,8 @@ rss.generate_xml(url_list, title_prefix_list)
 # --- generate zju-cmm rss feed --- #
 file_name = 'zju-cmm'
 output = os.path.join(output_dir, file_name+'.xml')
-database = os.path.join(output_dir, file_name+'.pkl')
-logfile = os.path.join(output_dir, file_name+'.log')
+database = os.path.join(database_dir, file_name+'.pkl')
+logfile = os.path.join(log_dir, file_name+'.log')
 homepage1 = 'http://www.cmm.zju.edu.cn/yltx/list.htm'   # 医路同行
 homepage2 = 'http://www.cmm.zju.edu.cn/38700/list.htm'  # 研究生教育
 
@@ -101,8 +115,8 @@ rss.generate_xml(url_list, title_prefix_list)
 # --- generate jike dailypost feed --- #
 file_name = 'jike-dailypost'
 output = os.path.join(output_dir, file_name+'.xml')
-database = os.path.join(output_dir, file_name+'.pkl')
-logfile = os.path.join(output_dir, file_name+'.log')
+database = os.path.join(database_dir, file_name+'.pkl')
+logfile = os.path.join(log_dir, file_name+'.log')
 homepage = 'https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68'
 
 from user_scripts.user_script_jike_dailypost import gen_url_list, parse_article
@@ -122,8 +136,8 @@ rss.generate_xml(url_list)
 # --- generate 睡前消息 feed --- #
 file_name = 'bedtime-story'
 output = os.path.join(output_dir, file_name+'.xml')
-database = os.path.join(output_dir, file_name+'.pkl')
-logfile = os.path.join(output_dir, file_name+'.log')
+database = os.path.join(database_dir, file_name+'.pkl')
+logfile = os.path.join(log_dir, file_name+'.log')
 
 from user_scripts.user_script_bedtime_story import GetURLs, parse_article
 
