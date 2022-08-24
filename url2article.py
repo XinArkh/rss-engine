@@ -1,3 +1,10 @@
+"""
+Extract website contents, using URL2io Server by default.
+You can also implement custom functions to do so by setting parse_article() in user scripts.
+
+http://url2io.applinzi.com/
+"""
+
 import re
 import datetime
 import requests
