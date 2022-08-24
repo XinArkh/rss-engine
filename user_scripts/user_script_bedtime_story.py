@@ -79,7 +79,7 @@ class GetURLs:
         r = self.sess_sogo.get(self.homepage_sogo, params=payload)
         time.sleep(1+random.random()) # to avoid anti-spider
         r.encoding = 'utf-8'
-        print('get:', title, r.url)
+        # print('get:', title, r.url)
 
         soup = BeautifulSoup(r.text, 'html.parser')
         url = None
