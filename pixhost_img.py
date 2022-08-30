@@ -1,3 +1,4 @@
+import time
 import requests
 from requests.adapters import HTTPAdapter, Retry
 from bs4 import BeautifulSoup
@@ -44,6 +45,7 @@ class PiXhost:
         }
 
         res = self.sess_pixhost.post(self.post_url, data=payload, files=file)
+        time.sleep(0.01)
         
         if res.status_code == 200:
             img_url = self.parse_img_url_from_response(res)
