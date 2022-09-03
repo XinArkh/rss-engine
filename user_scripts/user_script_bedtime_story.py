@@ -12,8 +12,10 @@ from requests.adapters import HTTPAdapter, Retry
 from faker import Faker
 from bs4 import BeautifulSoup
 
-import sys 
-sys.path.append("..") 
+import os, sys
+sys.path.extend([os.path.dirname(os.path.dirname(os.path.abspath(__file__)))])
+import url2article
+import pixhost_img
 import ym_verifycode
 
 
@@ -30,14 +32,15 @@ class GetURLs:
         self.homepage_sogo = 'https://weixin.sogou.com/weixin'
 
         self.sess_sogo = requests.session()
-        # 搜狗本身只需要user-agent即可访问，访问微信推文需要referer和cookie，这里为了方便集成在一起
         self.sess_sogo.headers = {'user-agent': Faker().user_agent(), 
                                   'referer': 'https://weixin.sogou.com/weixin?type=2&s_from=input&query='
                                      '%E7%9D%A1%E5%89%8D%E6%B6%88%E6%81%AF&ie=utf8&_sug_=n&_sug_type_=',
                                   'cookie': 'SUID=0C91AE272208990A000000005C7145DC; SUV=1550927324797555; '
-                                     'ssuid=8275997946; LSTMV=241%2C183; LCLKINT=5135; IPLOC=CN3301; weixinIndexVisited=1; '
-                                     'ABTEST=0|1654062326|v1; SNUID=67E1DE5770758F331506DFA470A2FCB2; JSESSIONID=aaaSeJsIn-ln9fmk-p6dy; '
-                                     'ariaDefaultTheme=undefined'
+                                      'ssuid=8275997946; IPLOC=CN3301; SGINPUT_UPSCREEN=1656915382829; '
+                                      'ABTEST=5|1660024272|v1; weixinIndexVisited=1; LSTMV=322%2C187; '
+                                      'LCLKINT=1614; JSESSIONID=aaap2f8T9OAKt-B4VvWky; PHPSESSID=7k4dpsbas0a24rki02b1kg2k02; '
+                                      'ariaDefaultTheme=undefined; SNUID=1294AB220500E3AA3CF077D205E1FDE7; seccodeRight=success; '
+                                      'successCount=1|Fri, 02 Sep 2022 10:36:04 GMT; refresh=1'
                                  }
         retry = Retry(connect=3, backoff_factor=0.5)
         adapter = HTTPAdapter(max_retries=retry)
@@ -79,7 +82,7 @@ class GetURLs:
         r = self.sess_sogo.get(self.homepage_sogo, params=payload)
         time.sleep(1+random.random()) # to avoid anti-spider
         r.encoding = 'utf-8'
-        # print('get:', title, r.url)
+        print('get:', title, r.url)
 
         soup = BeautifulSoup(r.text, 'html.parser')
         url = None
@@ -89,28 +92,36 @@ class GetURLs:
             max_loop -= 1
 
             if not soup.find('img', id='seccodeImage'): # 存在一定几率验证页面无此项，跳过直接在下个循环重新尝试
-                time.sleep(1+random.random()) # to avoid anti-spider
-                # max_loop += 1
+                print('重新获取页面...')
+                time.sleep(5+random.random()) # to avoid anti-spider
+                r = self.sess_sogo.get(self.homepage_sogo, params=payload)
+                r.encoding = 'utf-8'
+                soup = BeautifulSoup(r.text, 'html.parser')
                 continue
 
             img_url = 'https://weixin.sogou.com/antispider/' + soup.find('img', id='seccodeImage')['src']
             img_bin = self.download_img_bin(img_url)
             verify_code = ym_verifycode.identify_verifycode(img_bin)
 
-            src_url = re.search(r'\?from=(.*?)&antip=wx_js', r.url).group(1)
+            # src_url = re.search(r'(\?|&)from=(.*?)(&antip=wx_js)?', r.url).group(1)
+            src_url = re.search(r'(\?|&)from=(.+)(&antip=wx_js|$)?', r.url).group(2)
             auuid = re.search(r'var auuid = "(.*?)";', r.text).group(1)
 
             r = self.post_verifycode(verify_code, src_url, auuid)
             time.sleep(1+random.random()) # to avoid anti-spider
             r.encoding = 'utf-8'
-
             soup = BeautifulSoup(r.text, 'html.parser')
-            if r.text.startswith('{"code":'):
+            
+            if r.json()['msg'].startswith('解封成功'):
+                r = self.sess_sogo.get(self.homepage_sogo, params=payload)
+                time.sleep(1+random.random()) # to avoid anti-spider
+                r.encoding = 'utf-8'
+                soup = BeautifulSoup(r.text, 'html.parser')
                 break
 
         if not soup.find('ul', class_='news-list'):
+            # print('soup:', soup)
             raise Exception('Sogo anti-spider error!')
-
         for news in soup.find('ul', class_='news-list'):
             if not news.name == 'li':
                 continue
@@ -118,6 +129,7 @@ class GetURLs:
                 url = 'https://weixin.sogou.com' + news.find('div', class_='txt-box').a['href']
                 break
 
+        # print('url:', url)
         parsed_url = self.parse_url_sogo(url) if url else None
 
         return parsed_url
@@ -138,10 +150,10 @@ class GetURLs:
             'suuid': '',
             'auuid': auuid
         }
-        r = self.sess_sogo.post(post_url, params=payload)
+        r = self.sess_sogo.post(post_url, data=payload)
+        print('code_status', r.text)
 
         return r
-
 
     def parse_url_sogo(self, url):
         """解析搜狗跳转链接，转换为真实链接
@@ -154,6 +166,7 @@ class GetURLs:
         url += '&k=' + str(b) + '&h=' + a
 
         r = self.sess_sogo.get(url)
+        # print('parse url:', r.text)
         parsed_url_list = re.findall(r"url \+= '(.+)'", r.text)
         parsed_url = ''.join(parsed_url_list)
         parsed_url = re.sub(r'@', r'', parsed_url)
@@ -174,9 +187,24 @@ def replace_img_link(html):
     #               )
     # 
     # 方法二：https://bjun.tech/blog/xphp/31
+    # soup = BeautifulSoup(html, 'html.parser')
+    # for img in soup.find_all('img'):
+    #     img['referrerpolicy'] = 'same-origin'
+
+    # 方法三：将图片托管至图床
+    pix = pixhost_img.PiXhost()
+    sess_wx = requests.session()
+    sess_wx.headers = {
+        'user-agent': Faker().user_agent(),
+    }
+
     soup = BeautifulSoup(html, 'html.parser')
     for img in soup.find_all('img'):
-        img['referrerpolicy'] = 'same-origin'
+        src = img['src']
+        img_bin = sess_wx.get(src).content
+        src_new = pix.upload_img(img_bin)
+        img['src'] = src_new
+
     return str(soup)
 
 
@@ -256,9 +284,6 @@ def prettify_article(html):
 def parse_article(url, **kwags):
     """获取文章内容，并以字典形式返回"""
 
-    import os, sys
-    sys.path.extend([os.path.dirname(os.path.dirname(os.path.abspath(__file__)))])
-    import url2article
     article =  url2article.parse_article(url, **kwags)
 
     r = requests.get(url, **kwags)
