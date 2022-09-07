@@ -7,6 +7,9 @@ import re
 import datetime
 import requests
 from bs4 import BeautifulSoup
+import os, sys
+sys.path.extend([os.path.dirname(os.path.dirname(os.path.abspath(__file__)))])
+import url2article
 
 
 def get_url_content(url):
@@ -25,45 +28,30 @@ def gen_url_list(homepage):
     '''
     html = get_url_content(homepage)
     url_list = []
-    title_prefix_list = []
     soup = BeautifulSoup(html, 'html.parser')
-    for elem in soup.find_all('div'):
-        if elem.get('id') == 'wp_news_w2':
-            for item in elem.children:
-                if item != '\n':
-                    title_prefix_list.append('【' + item.find_all('span')[1].a.string + '】')
-                    link = item.find_all('a')[-1].get('href')
-                    link = 'http://www.grs.zju.edu.cn' + link if link.startswith('/') else link
-                    url_list.append(link)
-            break
+    elem = soup.find('div', id='wp_news_w09')
+    for item in elem.children:
+        if item != '\n':
+            link = item.a['href']
+            link = 'http://www.grs.zju.edu.cn' + link if link.startswith('/') else link
+            url_list.append(link)
 
-    return url_list, title_prefix_list
+    return url_list
 
 
 def match_pubdate(html):
-    '''
-    尝试在html文本中匹配【时间：yyyy-mm-dd】格式的字符片段，若匹配到则将其作为发布时间返回
-    p.s. api自带的时间提取功能错误率比较高，经常把正文中的时间提取为发表时间
-    '''
-    searchObj = re.search(r'时间：[0-9]{4}-[0-9]{2}-[0-9]{2}|&#x65F6;&#x95F4;&#xFF1A;[0-9]{4}-[0-9]{2}-[0-9]{2}', html)
-    # 【&#x65F6;&#x95F4;&#xFF1A;】是【时间：】的unicode字符，不知道为什么有时会以此形式出现
-
-    if searchObj:
-        pubdate = datetime.datetime.strptime(searchObj.group(0)[-10:], '%Y-%m-%d')
-        return pubdate
-    else:
-        return None
+    soup = BeautifulSoup(html, 'html.parser')
+    date = soup.find('div', class_='article-title').p.span.text
+    pubdate = datetime.datetime.strptime(date, '%Y-%m-%d')
+    return pubdate
 
 
 def parse_article(url):
     """解析文章信息"""
 
-    import os, sys
-    sys.path.extend([os.path.dirname(os.path.dirname(os.path.abspath(__file__)))])
-    import url2article
-
     article_info = url2article.parse_article(url)
 
+    # 抓取特定位置的日期信息，提高日期精度
     html = get_url_content(url)
     pubdate = match_pubdate(html)
     if pubdate:
@@ -73,11 +61,11 @@ def parse_article(url):
 
 
 if __name__ == '__main__':
-    homepage = 'http://www.grs.zju.edu.cn/'
-    url_list, title_prefix_list = gen_url_list(homepage)
+    homepage = 'http://www.grs.zju.edu.cn/qbgg/list.htm'
+    url_list = gen_url_list(homepage)
     
-    for url, prefix in zip(url_list, title_prefix_list):
-        print(prefix, url)
+    for url in url_list:
+        print(url)
 
     article = parse_article(url_list[0])
     print(article)
