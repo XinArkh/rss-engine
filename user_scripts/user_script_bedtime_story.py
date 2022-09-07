@@ -36,11 +36,10 @@ class GetURLs:
                                   'referer': 'https://weixin.sogou.com/weixin?type=2&s_from=input&query='
                                      '%E7%9D%A1%E5%89%8D%E6%B6%88%E6%81%AF&ie=utf8&_sug_=n&_sug_type_=',
                                   'cookie': 'SUID=0C91AE272208990A000000005C7145DC; SUV=1550927324797555; '
-                                      'ssuid=8275997946; IPLOC=CN3301; SGINPUT_UPSCREEN=1656915382829; '
-                                      'ABTEST=5|1660024272|v1; weixinIndexVisited=1; LSTMV=322%2C187; '
-                                      'LCLKINT=1614; JSESSIONID=aaap2f8T9OAKt-B4VvWky; PHPSESSID=7k4dpsbas0a24rki02b1kg2k02; '
-                                      'ariaDefaultTheme=undefined; SNUID=1294AB220500E3AA3CF077D205E1FDE7; seccodeRight=success; '
-                                      'successCount=1|Fri, 02 Sep 2022 10:36:04 GMT; refresh=1'
+                                  'ssuid=8275997946; IPLOC=CN3301; SGINPUT_UPSCREEN=1656915382829; ABTEST=5|1660024272|v1; '
+                                  'weixinIndexVisited=1; JSESSIONID=aaap2f8T9OAKt-B4VvWky; PHPSESSID=7k4dpsbas0a24rki02b1kg2k02; '
+                                  'SNUID=2DAA941D3A3FDCF9C669D80E3B504358; ld=RZllllllll209TjGlllllpGFtwZlllllJffSVZllll9llllllZ'
+                                  'lll5@@@@@@@@@@; ariaDefaultTheme=undefined'
                                  }
         retry = Retry(connect=3, backoff_factor=0.5)
         adapter = HTTPAdapter(max_retries=retry)
@@ -80,7 +79,7 @@ class GetURLs:
 
         payload = {'type': '2', 'query': title, 's_from': 'input', 'ie': 'utf8', '_sug_': 'n', '_sug_type_': ''}
         r = self.sess_sogo.get(self.homepage_sogo, params=payload)
-        time.sleep(1+random.random()) # to avoid anti-spider
+        time.sleep(5+random.random()) # to avoid anti-spider
         r.encoding = 'utf-8'
         print('get:', title, r.url)
 
@@ -108,7 +107,7 @@ class GetURLs:
             auuid = re.search(r'var auuid = "(.*?)";', r.text).group(1)
 
             r = self.post_verifycode(verify_code, src_url, auuid)
-            time.sleep(1+random.random()) # to avoid anti-spider
+            time.sleep(5+random.random()) # to avoid anti-spider
             r.encoding = 'utf-8'
             soup = BeautifulSoup(r.text, 'html.parser')
             
