@@ -207,10 +207,10 @@ def replace_img_link(html):
     return str(soup)
 
 
-def remove_break_line(html):
-    """移除网页源代码中的空白行"""
+def remove_0xa0(html):
+    """移除网页源代码中的<0xa0>"""
 
-    return re.sub(r'<p>(<(span|strong)>)*?(<br/?>|　| | )(<(/span|/strong)>)*?</p>',
+    return re.sub(r' ',
                   r'', 
                   html
                   )
@@ -220,62 +220,72 @@ def prettify_article(html):
     """优化文章内容格式"""
 
     html = replace_img_link(html)
-    html = remove_break_line(html)
+    html = remove_0xa0(html)
 
     soup = BeautifulSoup(html, 'html.parser')
-    if soup.p.img:                                          # 去除置顶的关注引导图片
-        soup.p.clear()
+    # if soup.p.img:                                          # 去除置顶的关注引导图片
+    #     soup.p.clear()
 
+    # 所有的child都应该为最顶层的section标签
     for child in soup.div.children:
-        if child.get_text().startswith('长按或扫码') or child.get_text().startswith('欢迎点击') or child.get_text().startswith('点击'):
-            p_tag = soup.new_tag('p')
+        # 跳过无意义的<section><span></span></section>
+        if child.get_text() == '':
+            continue
+
+        # 匹配主新闻标题（1./2./3....）
+        if re.match(r'\d+\.', child.get_text()):
+            child.name = 'h3'
+            title_dict = {
+                'title_elem': child,
+                'title_type': 1,
+            }
+
+        # 匹配附加新闻标题
+        elif 'span' in [c.name for c in child.children]:
+            title_dict = {
+                'title_elem': child,
+                'title_type': 2,
+            }
+
+        # 匹配包含新闻链接的section
+        elif 'p' in [c.name for c in child.children]:
+            for c in child.children:
+                if c.name == 'p':
+                    assert c.get_text().startswith('http')
+                    break
+            link = c.get_text()
+            link = re.sub(r' ', r'', link)         # 去除链接末尾的 
+
+            # 生成超链接标题
+            # 若原本有标题，判断是主标题还是附加标题
+            if title_dict:
+                if title_dict['title_type'] == 1:       # 主标题
+                    title_elem = title_dict['title_elem']
+                    a_tag = soup.new_tag('a', href=link)
+                    a_tag.string = title_elem.get_text()
+                    title_elem.clear()
+                    title_elem.append(a_tag)
+                
+                elif title_dict['title_type'] == 2:     # 附加标题
+                    title_elem = title_dict['title_elem']
+                    a_tag = soup.new_tag('a', href=link)
+                    a_tag.string = '+ ' + title_elem.get_text()
+                    title_elem.clear()
+                    title_elem.append(a_tag)
+            
+            # 若原本无标题，认为是不带标题的附加新闻
+            else:
+                a_tag = soup.new_tag('a', href=link)
+                a_tag.string = '+'
+                child.insert_before(a_tag)
+
+            # 链接转换到标题处之后，将原本的链接<p>标签转换为空行
+            c.clear()
             br_tag = soup.new_tag('br')
-            p_tag.append(br_tag)
-            child.insert_before(p_tag)
-            break
+            c.append(br_tag)
 
-        if child.name == 'p' or str(child.name).startswith('h'):
-            if child.get_text():
-                if not child.get_text().startswith('http'): # child为文本，包括带数字的大标题或不带数字的小标题
-                    title = child.get_text()
-                    if re.match(r'\d+\..*$', title):        # 如果是大标题，预先将其标签改为<h3>
-                        child.name='h3'
-                    else:                                   # 如果是小标题
-                        if not child.name == 'p':           # 如果其标签不是<p>，则将其转化为<p>
-                            child.name = 'p'
-                        if str(child.previous_sibling) == '<p><br/></p>':  # 如果前面是空行（转化自上一条新闻的链接标签），将其去除
-                            child.previous_sibling.clear()
-                        # 如果不是空行，说明上一条目没有链接，不需要再去除
-                    prev_sibling = child
-                else:                                       # child为链接
-                    link = child.get_text()
-                    link = re.sub(r' ', r'', link)     # 去除链接末尾的 
-
-                    if re.match(r'\d+\..*$', title):        # 判断前面的元素为大标题，为其增加超链接
-                        a_tag = soup.new_tag('a', href=link)
-                        a_tag.string = title
-                        prev_sibling.clear()
-                        prev_sibling.append(a_tag)
-                    else:                                   # 判断前面元素非大标题，可能是小标题或根本没有小标题
-                        a_tag = soup.new_tag('a', href=link)
-                        a_tag.string = '+ ' + title
-                        if title != '':                     # 有小标题，为其添加超链接
-                            prev_sibling.clear()
-                            prev_sibling.append(a_tag)
-                        else:                               # 无小标题，将前面残余的空行（转化自上一条新闻的链接标签）转换为超链接小标题
-                            # assert str(child.previous_sibling.previous_sibling) == '<p><br/></p>'
-                            if str(child.previous_sibling.previous_sibling) == '<p><br/></p>':
-                                child.previous_sibling.previous_sibling.clear()
-                                child.previous_sibling.previous_sibling.append(a_tag)
-                            # 还可能存在条目（包括大小标题及无标题）含有两个链接的情况，这里直接忽略
-                            # 若含有三个链接，此处逻辑依然有误，需要注意，但目前不考虑这么复杂的情况了
-
-                    child.clear()                       # 将原本的链接<p>标签转换为话题间的空行
-                    br_tag = soup.new_tag('br')
-                    child.append(br_tag)
-
-                    title = ''                              # 经过一个链接后，将标题和标签数据清空
-                    prev_sibling = None
+            # 链接转换到标题处之后，归零对前一个标题元素的记录
+            title_dict = None
 
     return str(soup)
 
