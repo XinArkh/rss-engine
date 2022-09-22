@@ -176,7 +176,7 @@ class GetURLs:
         return parsed_url
 
 
-def replace_img_link(html):
+def replace_img_link(html, simple_method=False):
     """将推文图片链接转换为外链可以访问的形式"""
 
     # 方法一：https://blog.csdn.net/yanjiee/article/details/52938144（失效弃用）
@@ -186,16 +186,18 @@ def replace_img_link(html):
     #               )
     # 
     # 方法二：https://bjun.tech/blog/xphp/31
-    # soup = BeautifulSoup(html, 'html.parser')
-    # for img in soup.find_all('img'):
-    #     img['referrerpolicy'] = 'same-origin'
+    if simple_method:
+        soup = BeautifulSoup(html, 'html.parser')
+        for img in soup.find_all('img'):
+            img['referrerpolicy'] = 'same-origin'
 
     # 方法三：将图片托管至图床
-    pix = pixhost_img.PiXhost()
-    sess_wx = requests.session()
-    sess_wx.headers = {
-        'user-agent': Faker().user_agent(),
-    }
+    else:
+        pix = pixhost_img.PiXhost()
+        sess_wx = requests.session()
+        sess_wx.headers = {
+            'user-agent': Faker().user_agent(),
+        }
 
     soup = BeautifulSoup(html, 'html.parser')
     for img in soup.find_all('img'):
@@ -219,16 +221,15 @@ def remove_0xa0(html):
 def prettify_article(html):
     """优化文章内容格式"""
 
-    html = replace_img_link(html)
+    html = replace_img_link(html, simple_method=False)
     html = remove_0xa0(html)
 
     soup = BeautifulSoup(html, 'html.parser')
     # if soup.p.img:                                          # 去除置顶的关注引导图片
     #     soup.p.clear()
 
-    # 所有的child都应该为最顶层的section标签
-    for child in soup.div.children:
-        # 跳过无意义的<section><span></span></section>
+    for child in soup.section.children:
+        # 跳过空标签
         if child.get_text() == '':
             continue
 
@@ -240,20 +241,17 @@ def prettify_article(html):
                 'title_type': 1,
             }
 
-        # 匹配附加新闻标题
-        elif 'span' in [c.name for c in child.children]:
+        # 匹配附加新闻标题，推文格式可能经常变动，对应需修改此处
+        elif child.name == 'p' and 'strong' in [c.name for c in child.descendants]:
+            child.string = '+ ' + child.get_text()
             title_dict = {
                 'title_elem': child,
                 'title_type': 2,
             }
 
-        # 匹配包含新闻链接的section
-        elif 'p' in [c.name for c in child.children]:
-            for c in child.children:
-                if c.name == 'p':
-                    assert c.get_text().startswith('http')
-                    break
-            link = c.get_text()
+        # 匹配新闻链接
+        elif child.get_text().startswith('http'):
+            link = child.get_text()
             link = re.sub(r' ', r'', link)         # 去除链接末尾的 
 
             # 生成超链接标题
@@ -269,7 +267,7 @@ def prettify_article(html):
                 elif title_dict['title_type'] == 2:     # 附加标题
                     title_elem = title_dict['title_elem']
                     a_tag = soup.new_tag('a', href=link)
-                    a_tag.string = '+ ' + title_elem.get_text()
+                    a_tag.string = title_elem.get_text()
                     title_elem.clear()
                     title_elem.append(a_tag)
             
@@ -279,10 +277,10 @@ def prettify_article(html):
                 a_tag.string = '+'
                 child.insert_before(a_tag)
 
-            # 链接转换到标题处之后，将原本的链接<p>标签转换为空行
-            c.clear()
+            # 链接转换到标题处之后，将原本的链接标签转换为空行
+            child.clear()
             br_tag = soup.new_tag('br')
-            c.append(br_tag)
+            child.append(br_tag)
 
             # 链接转换到标题处之后，归零对前一个标题元素的记录
             title_dict = None
