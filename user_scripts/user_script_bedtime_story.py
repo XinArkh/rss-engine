@@ -275,7 +275,7 @@ def prettify_article(html):
             else:
                 a_tag = soup.new_tag('a', href=link)
                 a_tag.string = '+'
-                child.insert_before(a_tag)
+                child.previous_sibling.insert_before(a_tag)
 
             # 链接转换到标题处之后，将原本的链接标签转换为空行
             child.clear()
