@@ -198,13 +198,12 @@ def replace_img_link(html, simple_method=False):
         sess_wx.headers = {
             'user-agent': Faker().user_agent(),
         }
-
-    soup = BeautifulSoup(html, 'html.parser')
-    for img in soup.find_all('img'):
-        src = img['src']
-        img_bin = sess_wx.get(src).content
-        src_new = pix.upload_img(img_bin)
-        img['src'] = src_new
+        soup = BeautifulSoup(html, 'html.parser')
+        for img in soup.find_all('img'):
+            src = img['src']
+            img_bin = sess_wx.get(src).content
+            src_new = pix.upload_img(img_bin)
+            img['src'] = src_new
 
     return str(soup)
 
