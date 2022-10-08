@@ -255,7 +255,7 @@ def prettify_article(html):
 
             # 生成超链接标题
             # 若原本有标题，判断是主标题还是附加标题
-            if title_dict:
+            if 'title_dict' in dir() and title_dict is not None:
                 if title_dict['title_type'] == 1:       # 主标题
                     title_elem = title_dict['title_elem']
                     a_tag = soup.new_tag('a', href=link)
