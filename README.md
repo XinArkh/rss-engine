@@ -28,20 +28,22 @@ RSSEngine is powered by [PyRSS2Gen](http://www.dalkescientific.com/Python/PyRSS2
 
 The following procedure shows how to deploy RSSEngine in a Linux server. 
 
-1. Fill in your API tokens in `user_api.py` 
-2. Clone this repository and your GitHub Pages (for example) repository in you own server (OpenWRT@RasPi in my case)
+1. Clone this repository and your target website (GitHub Pages for my example) repository in you own server (OpenWRT@RasPi in my case)
+2. Fill in your API tokens in `user_api.py` (optional if you need relevant functions)
 3. Edit `run_script.sh`, set relevant paths in your server
-4. Add executing permission for `run_script.sh` (`chmod +x gen_rss_demo.sh`)
+4. Add executing permission for `run_script.sh` (i.e. `chmod +x gen_rss_demo.sh`)
 5. Use Linux `crontab` command to set a periodical job:
 
 ```bash
-crontab -e  # open editing pannel
-# Tip: you can refer to https://crontab.guru/ to check your crontab commands
-# Redirect output to logfile.
+## open editing pannel
+crontab -e
+# tip: you can refer to https://crontab.guru/ to check your crontab commands
+# redirect output messages to logfile.
 >>> 0/30 * * * * /PATH/TO/run_script.sh >> /PATH/TO/rss.log
-# Now you can exit the editing pannel
+# exit the editing pannel (:wq)
 
-crontab -l  # list tasks
+## optional: list current jobs and refresh cron service
+crontab -l
 service cron restart
 ```
 
