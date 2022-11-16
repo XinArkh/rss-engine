@@ -77,18 +77,17 @@ file_name = 'zju-grs'
 output = os.path.join(output_dir, file_name+'.xml')
 database = os.path.join(database_dir, file_name+'.pkl')
 logfile = os.path.join(log_dir, file_name+'.log')
-homepage = 'http://www.grs.zju.edu.cn/qbgg/list.htm'
 
-from user_scripts.user_script_zju_grs import gen_url_list, parse_article
+from user_scripts.user_script_zju_grs import get_url_list, parse_article
 
-url_list = gen_url_list(homepage)
+url_list, title_prefix_list = get_url_list()
 rss = rss_engine.RSSEngine(rss_title='浙江大学研究生院信息公告', 
-                           rss_link=homepage, 
+                           rss_link='https://yjsybg.zju.edu.cn/', 
                            rss_description='浙江大学研究生院信息公告', 
                            output=output, database=database, logfile=logfile, 
                            verbose=True)
 rss.set_article_parser(parse_article)
-rss.generate_xml(url_list)
+rss.generate_xml(url_list, title_prefix_list)
 
 
 # --- generate zju-cmm rss feed --- #

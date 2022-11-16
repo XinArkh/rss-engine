@@ -1,6 +1,8 @@
 """
 用户脚本：浙大研究生学院通知
-需要提供关键函数：gen_url_list()和parse_article()
+需要提供关键函数：
+    get_url_list() - 用于生成所有关注栏目的通知链接（及对应前缀）
+    parse_article() - 用于解析统治的文章信息
 
 """
 import re
@@ -22,24 +24,46 @@ def get_url_content(url):
     return r.text
 
 
-def gen_url_list(homepage):
+def get_url_list_subpage(homepage):
     '''
-    研究生院网-信息公告-全部公告
+    获取分页栏目的网址列表，由于每个栏目结构相同，因此可使用同一个函数获取
     '''
     html = get_url_content(homepage)
     url_list = []
     soup = BeautifulSoup(html, 'html.parser')
-    elem = soup.find('div', id='wp_news_w09')
-    for item in elem.children:
-        if item != '\n':
-            link = item.a['href']
-            link = 'http://www.grs.zju.edu.cn' + link if link.startswith('/') else link
-            url_list.append(link)
-
+    for elem in soup.find_all('div'):
+        if elem.get('id') == 'wp_news_w09':
+            for item in elem.children:
+                if item != '\n':
+                    link = item.a['href']
+                    link = 'https://yjsybg.zju.edu.cn' + link if link.startswith('/') else link
+                    url_list.append(link)
+            break
     return url_list
 
 
+def get_url_list():
+    '''
+    生成所有关注栏目的通知链接及对应前缀
+    '''
+    hp1 = 'https://yjsybg.zju.edu.cn/rdtz/list.htm' # 研究生院办公网-信息公告-热点通知
+    hp2 = 'https://yjsybg.zju.edu.cn/hwjl/list.htm' # 研究生院办公网-信息公告-对外交流
+    hp3 = 'https://yjsybg.zju.edu.cn/glzz/list.htm' # 研究生院办公网-信息公告-各类资助
+
+    url_list1 = get_url_list_subpage(hp1)
+    url_list2 = get_url_list_subpage(hp2)
+    url_list3 = get_url_list_subpage(hp3)
+
+    url_list = url_list1 + url_list2 + url_list3
+    title_prefix_list = ['【热点通知】'] * len(url_list1) + ['【对外交流】'] * len(url_list2) + ['【各类资助】'] * len(url_list3)
+
+    return url_list, title_prefix_list
+
+
 def match_pubdate(html):
+    '''
+    手动抓取通知页面的日期信息，提高日期精度
+    '''
     soup = BeautifulSoup(html, 'html.parser')
     date = soup.find('div', class_='article-title').p.span.text
     pubdate = datetime.datetime.strptime(date, '%Y-%m-%d')
@@ -47,11 +71,10 @@ def match_pubdate(html):
 
 
 def parse_article(url):
-    """解析文章信息"""
-
+    '''
+    解析文章信息
+    '''
     article_info = url2article.parse_article(url)
-
-    # 抓取特定位置的日期信息，提高日期精度
     html = get_url_content(url)
     pubdate = match_pubdate(html)
     if pubdate:
@@ -61,11 +84,10 @@ def parse_article(url):
 
 
 if __name__ == '__main__':
-    homepage = 'http://www.grs.zju.edu.cn/qbgg/list.htm'
-    url_list = gen_url_list(homepage)
+    url_list, title_prefix_list = get_url_list()
     
-    for url in url_list:
-        print(url)
+    for url, title_prefix in zip(url_list, title_prefix_list):
+        print(title_prefix, url)
 
     article = parse_article(url_list[0])
     print(article)
