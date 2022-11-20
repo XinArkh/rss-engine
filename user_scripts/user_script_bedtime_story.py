@@ -81,7 +81,7 @@ class GetURLs:
         r = self.sess_sogo.get(self.homepage_sogo, params=payload)
         time.sleep(5+random.random()) # to avoid anti-spider
         r.encoding = 'utf-8'
-        print('get:', title, r.url)
+        print('in get_url_by_title_sogo(): get:', title, r.url)
 
         soup = BeautifulSoup(r.text, 'html.parser')
         url = None
@@ -241,7 +241,7 @@ def prettify_article(html):
             }
 
         # 匹配附加新闻标题，推文格式可能经常变动，对应需修改此处
-        elif child.name == 'p' and 'strong' in [c.name for c in child.descendants]:
+        elif set([c.name for c in child.descendants]) == set(['strong', 'span', None]):
             child.string = '+ ' + child.get_text()
             title_dict = {
                 'title_elem': child,
