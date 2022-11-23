@@ -242,6 +242,8 @@ def prettify_article(html):
 
         # 匹配附加新闻标题，推文格式可能经常变动，对应需修改此处
         elif set([c.name for c in child.descendants]) == set(['strong', 'span', None]):
+            if child.name.startswith('h'):
+                child.name = 'p'
             child.string = '+ ' + child.get_text()
             title_dict = {
                 'title_elem': child,
