@@ -102,9 +102,27 @@ from user_scripts.user_script_zju_cmm import gen_url_list, parse_article
 
 url_list, title_prefix_list = gen_url_list([homepage1, homepage2])
 rss = rss_engine.RSSEngine(rss_title='浙江大学医学院信息公告', 
-                           rss_link=homepage, 
+                           rss_link='http://www.cmm.zju.edu.cn/', 
                            rss_description='浙江大学医学院信息公告', 
                            within_days=365*15,
+                           output=output, database=database, logfile=logfile, 
+                           verbose=True)
+rss.set_article_parser(parse_article)
+rss.generate_xml(url_list, title_prefix_list)
+
+
+# --- generate zju-yqfk rss feed --- #
+file_name = 'zju-yqfk'
+output = os.path.join(output_dir, file_name+'.xml')
+database = os.path.join(database_dir, file_name+'.pkl')
+logfile = os.path.join(log_dir, file_name+'.log')
+
+from user_scripts.user_script_zju_yqfk import get_url_list, parse_article
+
+url_list, title_prefix_list = get_url_list()
+rss = rss_engine.RSSEngine(rss_title='浙江大学疫情防控工作', 
+                           rss_link='https://yqfk.zju.edu.cn/', 
+                           rss_description='浙江大学疫情防控工作', 
                            output=output, database=database, logfile=logfile, 
                            verbose=True)
 rss.set_article_parser(parse_article)
