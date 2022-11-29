@@ -2,7 +2,7 @@
 用户脚本：浙大研究生学院通知
 需要提供关键函数：
     get_url_list() - 用于生成所有关注栏目的通知链接（及对应前缀）
-    parse_article() - 用于解析统治的文章信息
+    parse_article() - 用于解析通知文章信息
 
 """
 import re
