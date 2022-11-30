@@ -123,6 +123,7 @@ url_list, title_prefix_list = get_url_list()
 rss = rss_engine.RSSEngine(rss_title='浙江大学疫情防控工作', 
                            rss_link='https://yqfk.zju.edu.cn/', 
                            rss_description='浙江大学疫情防控工作', 
+                           rss_icon='https://yqfk.zju.edu.cn/_upload/tpl/0a/79/2681/template2681/favicon.ico',
                            output=output, database=database, logfile=logfile, 
                            verbose=True)
 rss.set_article_parser(parse_article)
