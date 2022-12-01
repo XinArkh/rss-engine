@@ -14,6 +14,7 @@ RSSEngine is powered by [PyRSS2Gen](http://www.dalkescientific.com/Python/PyRSS2
 - 浙江大学医学院通知: [xinwu.me/rss/zju-cmm.xml](xinwu.me/rss/zju-cmm.xml)
 - 浙江大学研究生院通知: [xinwu.me/rss/zju-grs.xml](xinwu.me/rss/zju-grs.xml)
 - 浙江大学机械工程学院通知: [https://www.xinwu.me/rss/zju-me.xml](https://www.xinwu.me/rss/zju-me.xml)
+- 浙江大学疫情防控工作通知: [https://www.xinwu.me/rss/zju-yqfk.xml](https://www.xinwu.me/rss/zju-yqfk.xml)
 
 ## Prerequisite
 
@@ -36,15 +37,15 @@ The following procedure shows how to deploy RSSEngine in a Linux server.
 
 ```bash
 ## open editing pannel
-crontab -e
+>>> crontab -e
 # tip: you can refer to https://crontab.guru/ to check your crontab commands
 # redirect output messages to logfile.
 >>> 0/30 * * * * /PATH/TO/run_script.sh >> /PATH/TO/rss.log
 # exit the editing pannel (:wq)
 
 ## optional: list current jobs and refresh cron service
-crontab -l
-service cron restart
+>>> crontab -l
+>>> service cron restart
 ```
 
 ## Custom Feeds
