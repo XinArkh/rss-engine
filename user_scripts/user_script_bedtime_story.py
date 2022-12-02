@@ -227,7 +227,7 @@ def prettify_article(html):
     # if soup.p.img:                                          # 去除置顶的关注引导图片
     #     soup.p.clear()
 
-    for child in soup.section.children:
+    for child in soup.contents[0].children:
         # 跳过空标签
         if child.get_text() == '':
             continue
