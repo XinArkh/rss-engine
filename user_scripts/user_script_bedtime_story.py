@@ -227,20 +227,21 @@ def prettify_article(html):
     # if soup.p.img:                                          # 去除置顶的关注引导图片
     #     soup.p.clear()
 
-    for child in soup.contents[0].children:
+    loop = soup.contents[0] if len(soup.contents) == 1 else soup
+    for child in loop.children:
         # 跳过空标签
         if child.get_text() == '':
             continue
 
-        # 匹配主新闻标题（1./2./3....）
-        if re.match(r'\d+\.', child.get_text()):
+        # 匹配主新闻标题（1./2./3....或1、/2、/3、...）
+        if re.match(r'\d+[\.、]', child.get_text()):
             child.name = 'h3'
             title_dict = {
                 'title_elem': child,
                 'title_type': 1,
             }
 
-        # 匹配附加新闻标题，推文格式可能经常变动，对应需修改此处
+        # 匹配附加新闻标题
         elif set([c.name for c in child.descendants]) == set(['strong', 'span', None]):
             if child.name.startswith('h'):
                 child.name = 'p'
