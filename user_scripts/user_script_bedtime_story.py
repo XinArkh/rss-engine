@@ -242,7 +242,10 @@ def prettify_article(html):
             }
 
         # 匹配附加新闻标题
-        elif set([c.name for c in child.descendants]) == set(['strong', 'span', None]):
+        elif set([c.name for c in child.descendants]) == set(['strong', 'span', None]) or \
+            set([c.name for c in child.descendants]) == set(['strong', 'br', None]) or\
+            set([c.name for c in child.descendants]) == set(['strong', None]):
+
             if child.name.startswith('h'):
                 child.name = 'p'
             child.string = '+ ' + child.get_text()
@@ -252,8 +255,17 @@ def prettify_article(html):
             }
 
         # 匹配新闻链接
-        elif child.get_text().startswith('http'):
-            link = child.get_text()
+        elif child.get_text().startswith('http') or \
+            (len(child.contents) > 1 and child.contents[-1].get_text().startswith('http')):
+
+            # 匹配一个大section标签下面包含新闻内容+新闻链接的情况
+            if len(child.contents) > 1 and child.contents[-1].get_text().startswith('http'):
+                link_elem = child.contents[-1]
+            # 否则即为新闻链接标签与标题和新闻内容标签并列的情况
+            else:
+                link_elem = child
+
+            link = link_elem.get_text()
             link = re.sub(r' ', r'', link)         # 去除链接末尾的 
 
             # 生成超链接标题
@@ -273,16 +285,19 @@ def prettify_article(html):
                     title_elem.clear()
                     title_elem.append(a_tag)
             
-            # 若原本无标题，认为是不带标题的附加新闻
+            # 若原本无标题，则认为是不带标题的附加新闻
             else:
                 a_tag = soup.new_tag('a', href=link)
                 a_tag.string = '+'
-                child.previous_sibling.insert_before(a_tag)
+                if len(child.contents) > 1:
+                    child.insert_before(a_tag)
+                else:
+                    child.previous_sibling.insert_before(a_tag)
 
             # 链接转换到标题处之后，将原本的链接标签转换为空行
-            child.clear()
+            link_elem.clear()
             br_tag = soup.new_tag('br')
-            child.append(br_tag)
+            link_elem.append(br_tag)
 
             # 链接转换到标题处之后，归零对前一个标题元素的记录
             title_dict = None
