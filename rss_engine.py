@@ -118,7 +118,7 @@ class RSSEngine:
 
         with open(self.database, 'wb') as f:
             pickle.dump([url_set, item_list], f)
-        if self.verbose: print('%s: database updated.' % self.rss_channel_elem['title'])
+        if self.verbose: print('rss_engine.py: %s: database updated.' % self.rss_channel_elem['title'])
 
     def set_article_parser(self, parser_func, **kwargs):
         """Set custom article parser"""
@@ -151,7 +151,7 @@ class RSSEngine:
                         article = self.article_parser(url)
                 except Exception as e:
                     log_str += 'item parsing failed: ' + title_prefix + url + ' : ' + str(e) + '\n'
-                    if self.verbose: print('item parsing failed:', title_prefix, url, ':', str(e))
+                    if self.verbose: print('rss_engine.py: item parsing failed:', title_prefix, url, ':', str(e))
                     continue
 
                 # try add article
@@ -193,12 +193,12 @@ class RSSEngine:
                         item_list.append(PyRSS2Gen.RSSItem(**article_item))
 
                         log_str += 'item added: ' + str(article_item_simp) + '\n'
-                        if self.verbose: print('item added:', article_item_simp)
+                        if self.verbose: print('rss_engine.py: item added:', article_item_simp)
                         item_num += 1
                     
                     else:
                         log_str += 'item out of date, skipped: ' + str(article_item_simp) + '\n'
-                        if self.verbose: print('item out of date, skipped:', article_item_simp)
+                        if self.verbose: print('rss_engine.py: item out of date, skipped:', article_item_simp)
                     
                     url_set.add(url)
 
@@ -207,7 +207,7 @@ class RSSEngine:
                     article_simp.pop('content', None)
 
                     log_str += 'item add failed: ' + str(article_simp) + ' : ' + str(e) + '\n'
-                    if self.verbose: print('item add failed:', article_simp, ':', str(e))
+                    if self.verbose: print('rss_engine.py: item add failed:', article_simp, ':', str(e))
 
                 time.sleep(0.01) # avoid anti-spider
 
@@ -222,12 +222,12 @@ class RSSEngine:
             rss = PyRSS2Gen.RSS2(**self.rss_channel_elem)
             
             rss.write_xml(open(self.output, 'w', encoding='utf-8'), encoding='utf-8')
-            if self.verbose: print('%s: rss file updated, %d rss items updated.' % (self.rss_channel_elem['title'], item_num))
+            if self.verbose: print('rss_engine.py: %s: rss file updated, %d rss items updated.' % (self.rss_channel_elem['title'], item_num))
             self.write_database(url_set, item_list)
 
         log_str += '------ %s: %d new rss items updated ------\n\n' % (datetime.datetime.now(), item_num)
         self.log(log_str, self.logfile)
-        if self.verbose: print('%s: log file updated.' % self.rss_channel_elem['title'])
+        if self.verbose: print('rss_engine.py: %s: log file updated.' % self.rss_channel_elem['title'])
 
 
 if __name__ == '__main__':
