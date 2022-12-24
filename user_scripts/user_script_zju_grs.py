@@ -18,7 +18,7 @@ def get_url_content(url):
     '''
     获取网页源码，以字符串方式返回
     '''
-    r = requests.get(url)
+    r = requests.get(url, verify=False)
     r.raise_for_status()
     r.encoding = 'utf-8'
     return r.text
@@ -74,7 +74,7 @@ def parse_article(url):
     '''
     解析文章信息
     '''
-    article_info = url2article.parse_article(url)
+    article_info = url2article.parse_article(url, verify=False)
     html = get_url_content(url)
     pubdate = match_pubdate(html)
     if pubdate:
