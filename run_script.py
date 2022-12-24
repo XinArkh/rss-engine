@@ -74,9 +74,12 @@ try:
                                verbose=True)
     rss.set_article_parser(parse_article)
     rss.generate_xml(url_list, title_prefix_list)
+except:
+    print('run_script.py: running %s error!' % file_name)
 
 
-    # --- generate zju-grs rss feed --- #
+# --- generate zju-grs rss feed --- #
+try:
     file_name = 'zju-grs'
     output = os.path.join(output_dir, file_name+'.xml')
     database = os.path.join(database_dir, file_name+'.pkl')
