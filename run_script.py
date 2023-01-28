@@ -45,7 +45,7 @@ try:
                                rss_description='少数派RSS Feed-文章完整抓取版', 
                                rss_language='zh-CN',
                                rss_managingEditor='contact@sspai.com (少数派)',
-                               rss_icon='https://t75.pixhost.to/thumbs/126/299184373_ouezg12u_400x400.png',
+                               rss_icon='https://i.postimg.cc/P5PfLKrf/72157b63jw8f6bxfg3yixj20yf0yf75t.jpg',
                                output=output, database=database, logfile=logfile, 
                                verbose=True)
     rss.set_article_parser(parse_article, homepage=homepage)
@@ -166,6 +166,28 @@ try:
                                double_check=True, 
                                verbose=True)
     rss.set_article_parser(parse_article, headers=get_urls.sess_sogo.headers)
+    rss.generate_xml(url_list)
+except:
+    print('run_script.py: running %s error!' % file_name)
+
+
+# --- generate wmyblog feed --- #
+try:
+    file_name = 'wmyblog'
+    output = os.path.join(output_dir, file_name+'.xml')
+    database = os.path.join(database_dir, file_name+'.pkl')
+    logfile = os.path.join(log_dir, file_name+'.log')
+
+    from user_scripts.user_script_wmyblog import get_url_list
+
+    url_list = get_url_list()
+    rss = rss_engine.RSSEngine(rss_title='王孟源的博客', 
+                               rss_link='https://taizihuang.github.io/wmyblog/', 
+                               rss_description='王孟源的博客镜像', 
+                               rss_icon='https://i.postimg.cc/CK99vsgN/f-Mengyuan-Wang-2.jpg',
+                               output=output, database=database, logfile=logfile, 
+                               double_check=True, 
+                               verbose=True)
     rss.generate_xml(url_list)
 except:
     print('run_script.py: running %s error!' % file_name)

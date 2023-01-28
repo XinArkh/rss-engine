@@ -40,6 +40,6 @@ def parse_article(url, **kwags):
 
 if __name__ == '__main__':
     # example
-    article = parse_article('http://ygb.zju.edu.cn/2022/0304/c31564a2503309/page.htm')
+    article = parse_article('https://taizihuang.github.io/wmyblog/html/177266891.html')
     print(article)
     print(article.keys())
