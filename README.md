@@ -8,11 +8,12 @@ RSSEngine is powered by [PyRSS2Gen](http://www.dalkescientific.com/Python/PyRSS2
 
 ## Feed List
 
-### Maintained
+### Maintaining
 
 - 睡前消息-马前卒工作室: [https://www.xinwu.me/rss/bedtime-story.xml](https://www.xinwu.me/rss/bedtime-story.xml)
 - 即刻App-一觉醒来世界发生了什么: [https://www.xinwu.me/rss/jike-dailypost.xml](https://www.xinwu.me/rss/jike-dailypost.xml)
 - 少数派-全文版: [https://www.xinwu.me/rss/sspai.xml](https://www.xinwu.me/rss/sspai.xml)
+- 王孟源的博客: [https://www.xinwu.me/rss/wmyblog.xml](https://www.xinwu.me/rss/wmyblog.xml)
 - 浙江大学医学院通知: [xinwu.me/rss/zju-cmm.xml](xinwu.me/rss/zju-cmm.xml)
 - 浙江大学研究生院通知: [xinwu.me/rss/zju-grs.xml](xinwu.me/rss/zju-grs.xml)
 - 浙江大学机械工程学院通知: [https://www.xinwu.me/rss/zju-me.xml](https://www.xinwu.me/rss/zju-me.xml)
