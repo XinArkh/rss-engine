@@ -45,7 +45,7 @@ try:
                                rss_description='少数派RSS Feed-文章完整抓取版', 
                                rss_language='zh-CN',
                                rss_managingEditor='contact@sspai.com (少数派)',
-                               rss_icon='https://i.postimg.cc/P5PfLKrf/72157b63jw8f6bxfg3yixj20yf0yf75t.jpg',
+                               rss_icon='https://i0.hdslb.com/bfs/face/bbe80dc05f67e9543a33b067764227b02504bfa0.jpg',
                                output=output, database=database, logfile=logfile, 
                                verbose=True)
     rss.set_article_parser(parse_article, homepage=homepage)
