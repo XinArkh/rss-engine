@@ -132,6 +132,6 @@ if __name__ == '__main__':
     for url, title_prefix in zip(url_list, title_prefix_list):
         print(title_prefix, url)
 
-    article = parse_article('http://kyjs.zju.edu.cn/srts/#/home/news/8692?type=14')
+    article = parse_article(url_list[0])
     print(article)
     print(article.keys())
