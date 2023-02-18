@@ -41,6 +41,7 @@ def parse_article(html_clip):
     date_str = date_str_obj.group()
     y, m, d = int(date_str_obj.group(1)), int(date_str_obj.group(2)), int(date_str_obj.group(3))
 
+    article['url'] = date_str
     article['title'] = date_str + ' 一觉醒来'
     article['date'] = str(datetime.datetime(y, m, d))
     article['content'] = html_clip
