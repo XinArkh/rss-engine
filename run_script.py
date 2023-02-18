@@ -137,7 +137,6 @@ try:
                                rss_link='https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68', 
                                rss_description='一觉醒来世界发生了什么-即刻App', 
                                rss_icon='https://t75.pixhost.to/thumbs/127/299240346_300x300a0a0.jpg',
-                               max_item_num=12, 
                                output=output, database=database, logfile=logfile, 
                                verbose=True)
     rss.set_article_parser(parse_article)

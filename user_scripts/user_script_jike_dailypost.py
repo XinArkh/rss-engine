@@ -8,8 +8,6 @@ import requests
 from bs4 import BeautifulSoup
 
 
-homepage = 'https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68'
-
 def get_url_content(url):
     '''
     获取网页源码，以字符串方式返回
@@ -25,6 +23,7 @@ def get_html_clip_list():
     即刻App-一觉醒来世界发生了什么
     https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68
     '''
+    homepage = 'https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68'
     html = get_url_content(homepage)
     url_list = []
     soup = BeautifulSoup(html, 'html.parser')
@@ -37,7 +36,6 @@ def get_html_clip_list():
 
 def parse_article(html_clip):
     article = {}
-    article['url'] = homepage
 
     date_str_obj = re.search(r'([0-9]+)年([0-9]+)月([0-9]+)日', html_clip)
     date_str = date_str_obj.group()
