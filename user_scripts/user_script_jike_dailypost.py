@@ -2,10 +2,13 @@
 用户脚本：即刻App-一觉醒来世界发生了什么
 需要提供关键函数：gen_url_list()和parse_article()
 """
+import re
 import datetime
 import requests
 from bs4 import BeautifulSoup
 
+
+homepage = 'https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68'
 
 def get_url_content(url):
     '''
@@ -17,7 +20,7 @@ def get_url_content(url):
     return r.text
 
 
-def gen_url_list(homepage):
+def get_html_clip_list():
     '''
     即刻App-一觉醒来世界发生了什么
     https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68
@@ -26,40 +29,33 @@ def gen_url_list(homepage):
     url_list = []
     soup = BeautifulSoup(html, 'html.parser')
     for li in soup.find('ul', class_='post-list'):
-        # print(li.find('div', class_='jsx-3930310120').find('a')['href'])
-        url_list.append(li.find('div', class_='jsx-3930310120').find('a')['href'])
+        # print(li.find('div', class_='jsx-3930310120'))
+        url_list.append(str(li.find('div', class_='jsx-3930310120')))
 
     return url_list
 
 
-def parse_article(url):
+def parse_article(html_clip):
     article = {}
-    article['url'] = url
+    article['url'] = homepage
 
-    html = get_url_content(url)
-    soup = BeautifulSoup(html, 'html.parser')
+    date_str_obj = re.search(r'([0-9]+)年([0-9]+)月([0-9]+)日', html_clip)
+    date_str = date_str_obj.group()
+    y, m, d = int(date_str_obj.group(1)), int(date_str_obj.group(2)), int(date_str_obj.group(3))
 
-    article['title'] = soup.title.text
-    article['date'] = str(datetime.datetime.strptime(article['title'][:8], '%Y%m%d'))
-
-    content = ''
-    for li in soup.find('ul', class_='main'):
-        link = li.a['href']
-        num = li.find('span', class_='num').text
-        text = li.find('span', class_='text').text
-        content += '<a href="%s">%s %s</a><br>' % (link, num, text)
-    article['content'] = content
+    article['title'] = date_str + ' 一觉醒来'
+    article['date'] = str(datetime.datetime(y, m, d))
+    article['content'] = html_clip
 
     return article
 
 
 if __name__ == '__main__':
-    homepage = 'https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68'
-    url_list = gen_url_list(homepage)
+    html_clip_list = get_html_clip_list()
     
-    for url in url_list:
-        print(url)
+    for html_clip in html_clip_list:
+        print(html_clip, '\n')
 
-    article = parse_article(url_list[0])
+    article = parse_article(html_clip_list[0])
     print(article)
     print(article.keys())

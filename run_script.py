@@ -129,20 +129,19 @@ try:
     output = os.path.join(output_dir, file_name+'.xml')
     database = os.path.join(database_dir, file_name+'.pkl')
     logfile = os.path.join(log_dir, file_name+'.log')
-    homepage = 'https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68'
 
-    from user_scripts.user_script_jike_dailypost import gen_url_list, parse_article
+    from user_scripts.user_script_jike_dailypost import get_html_clip_list, parse_article
 
-    url_list = gen_url_list(homepage)
+    html_clip_list = get_html_clip_list()
     rss = rss_engine.RSSEngine(rss_title='一觉醒来世界发生了什么-即刻App', 
-                               rss_link=homepage, 
+                               rss_link='https://m.okjike.com/topics/553870e8e4b0cafb0a1bef68', 
                                rss_description='一觉醒来世界发生了什么-即刻App', 
                                rss_icon='https://t75.pixhost.to/thumbs/127/299240346_300x300a0a0.jpg',
                                max_item_num=12, 
                                output=output, database=database, logfile=logfile, 
                                verbose=True)
     rss.set_article_parser(parse_article)
-    rss.generate_xml(url_list)
+    rss.generate_xml(html_clip_list)
 except:
     print('run_script.py: running %s error!' % file_name)
 
