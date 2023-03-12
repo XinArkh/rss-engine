@@ -57,3 +57,10 @@ The following procedure shows how to deploy RSSEngine in a Linux server.
 ## Custom Feeds
 
 Write and put your own script in `user_scripts/` and register it in `run_script.py`. It's pretty easy, you can refer to existing sample scripts.
+
+
+## By Me a Coffee
+
+If you like this project and want to show your support, you can buy me a coffee!
+
+![donate](./donate.png)
