@@ -63,4 +63,7 @@ Write and put your own script in `user_scripts/` and register it in `run_script.
 
 If you like this project and want to show your support, you can buy me a coffee!
 
-![donate](./donate.png)
+<p align="center">
+    <img src="./donate.png" height="240">
+</p>
+
