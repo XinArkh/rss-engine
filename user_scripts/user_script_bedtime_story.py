@@ -24,7 +24,7 @@ class GetURLs:
 
     def __init__(self):
         # 初始化feeddd源
-        self.homepage_feeddd = 'https://api.feeddd.org/feeds/612320c451e2511a827a11d6'
+        self.homepage_feeddd = 'https://feed.hamibot.com/api/feeds/612320c451e2511a827a11d6'
         r_feeddd = requests.get(self.homepage_feeddd)
         self.soup_feeddd = BeautifulSoup(r_feeddd.text, 'xml')
 
