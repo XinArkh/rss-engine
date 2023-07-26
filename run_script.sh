@@ -23,14 +23,17 @@ CRTDIR=$(pwd)
 # CRTDATE=$(date "+%Y-%m-%d")
 CRTDATE=$(date)
 
+echo "--- uploading rss feed to github repo... ---"
 cd $REPO_PATH
-echo "--- uploading rss feed... ---"
 git pull
 git add rss/*.xml
 git commit -m "rss feed auto update: ${CRTDATE}"
 git push
-echo "--- rss feed updating done! ---"
-
 cd $CRTDIR
+echo "--- rss feed uploaded! ---"
+echo "--- rss feed auto update done! ---"
+echo
+echo
+
 rm $TMP_RSS_LOCK
 fi
