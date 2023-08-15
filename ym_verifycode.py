@@ -18,7 +18,7 @@ def identify_verifycode(img_bin):
     headers = {'Content-Type': 'application/json'}
     payload = {'image': img_b64_str, 
            'token': yunma_token,
-           'type': '10103'}
+           'type': '10104'}
     r = requests.post(api_url, headers=headers, data=json.dumps(payload))
     if not r.status_code == 200:
         raise Exception('YunMa Error: %s' % r.text)
